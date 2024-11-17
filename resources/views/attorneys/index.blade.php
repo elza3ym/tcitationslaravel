@@ -5,9 +5,9 @@
             <div class="card table-card">
                 <div class="card-header">
                     <div class="sm:flex items-center justify-between">
-                        <h5 class="mb-3 sm:mb-0">Companies list</h5>
+                        <h5 class="mb-3 sm:mb-0">Attorneys list</h5>
                         <div>
-                            <a href="{{ route('admin.companies.create') }}" class="btn btn-primary">Create Company</a>
+                            <a href="{{ route('admin.attorneys.create') }}" class="btn btn-primary">Create Attorney</a>
                         </div>
                     </div>
                 </div>
@@ -18,13 +18,14 @@
                             <tr>
                                 <th></th>
                                 <th>Name</th>
-                                <th>CT Name</th>
-                                <th>DOT</th>
+                                <th>State</th>
+                                <th>City</th>
+                                <th>Last access</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($companies as $company)
+                            @foreach($users as $user)
                                 <tr>
                                     <td>
                                         <input type="checkbox" class="form-check-input">
@@ -32,14 +33,15 @@
                                     <td>
                                         <div class="flex items-center">
                                             <div class="grow ltr:ml-1 rtl:mr-1">
-                                                <h6 class="mb-0">{{ $company->name }}</h6>
+                                                <h6 class="mb-0">{{ $user->name }}</h6>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $company->ct_fname }} {{ $company->ct_lname }}</td>
-                                    <td>{{ $company->dot }}</td>
+                                    <td>{{ $user->state }}</td>
+                                    <td>{{ $user->city }}</td>
+                                    <td>{{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() : 'Never' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.companies.edit', $company->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                        <a href="{{ route('admin.attorneys.edit', $user->roleable->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
                                             <i class="ti ti-edit text-xl leading-none"></i>
                                         </a>
                                         <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
@@ -68,10 +70,10 @@
                             </div>
                         </div>
                         <div>
-                            {{ $companies->links() }}
+                            {{ $users->links() }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        @endsection
+@endsection

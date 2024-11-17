@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('company_manager', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('manager_id');
-            $table->unsignedBigInteger('company_id');
+            $table->foreignId('manager_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->boolean('is_write_access')->default(false); // Additional field
             $table->timestamps();
-
-            $table->foreign('manager_id')->references('id')->on('managers')->onDelete('cascade');
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 

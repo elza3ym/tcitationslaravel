@@ -73,11 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($currentUser->hasRole('admin')) {
             // Admin: No filtering needed
             return $query;
-        } elseif ($currentUser->hasRole('company')) {
-            // Company: Filter by roleable_id and roleable_type
-            return $query->where('roleable_id', $currentUser->roleable_id)
-                ->where('roleable_type', Company::class);
-        } elseif ($currentUser->hasRole('manager')) {
+        }  elseif ($currentUser->hasRole('manager')) {
             // Manager: Filter by associated companies
             return $query->whereHas('roleable', function ($q) use ($currentUser) {
                 $q->whereIn('id', $currentUser->companies->pluck('id')->toArray());

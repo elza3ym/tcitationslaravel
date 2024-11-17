@@ -110,7 +110,7 @@
                                 </td>
                                 <td>{{ $ticket->date_issued }}</td>
                                 <td>{{ $ticket->state }}</td>
-                                <td>{{ $ticket->company?->user->name }}</td>
+                                <td>{{ $ticket->company?->name }}</td>
                                 <td>
                                     {{ $ticket->indicator }}
                                 </td>
@@ -186,9 +186,9 @@
                 .then(function (data) {
                     return data.map(function (company) {
                         return {
-                            value: company.roleable.id,
+                            value: company.id,
                             label: company.name,
-                            selected: '{{ Request::get('company_id') }}' === company.roleable.id
+                            selected: '{{ Request::get('company_id') }}' === ''+company.id
                         };
                     });
                 });
@@ -222,4 +222,5 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/plugins/flatpickr.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/plugins/choices.min.css') }}" />
 @endsection

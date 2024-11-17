@@ -731,9 +731,9 @@
                 .then(function (data) {
                     return data.map(function (company) {
                         return {
-                            value: company.roleable.id,
+                            value: company.id,
                             label: company.name,
-                            selected: '{{ Request::get('company') }}' === company.name
+                            selected: {{ old('company_id') }} === company.id
                         };
                     });
                 });
@@ -746,6 +746,8 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css">
     <link rel="stylesheet" href="{{ asset('css/plugins/flatpickr.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/plugins/choices.min.css') }}" />
+
     <style>
         .marker {
             width: 24px;

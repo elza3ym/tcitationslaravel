@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
         Permission::create(['name' => 'update citation']);
         Permission::create(['name' => 'delete citation']);
 
+        Permission::create(['name' => 'write.company.*']);
 
         // Define the admin role and assign permissions
         $adminRole = Role::create(['name' => 'admin']);

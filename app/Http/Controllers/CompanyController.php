@@ -15,12 +15,18 @@ class CompanyController extends Controller
     public function index()
     {
         //
-        $users = User::role('company')
-            ->filterByRole(request()->user())
-            ->latest()
-            ->paginate(15);
+        $companies = Company::latest();
+        $currentUser = \request()->user();
+        if ($currentUser->hasRole('admin')) {
 
-        return view('companies.index', compact('users'));
+        } else if ($currentUser->hasRole('manager')) {
+            $companies->whereHas('managers', function ($query) use ($currentUser) {
+                $query->where('manager_id', $currentUser->roleable_id); // Ensure `roleable_id` is used correctly
+            });
+        }
+        $companies = $companies->paginate(15);
+
+        return view('companies.index', compact('companies'));
     }
 
     /**
@@ -40,19 +46,7 @@ class CompanyController extends Controller
         //
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'dob' => 'date',
-            'address' => '',
-            'city' => '',
-            'state' => '',
-            'zip' => '',
-            'phone' => '',
-            'timezone' => '',
-            'notification_email' => '',
-            'notification_sms' => '',
-            'notification_push' => '',
-            'ct_email' => 'email',
+            'ct_email' => 'nullable|email',
             'ct_fname' => '',
             'ct_lname' => '',
             'dot' => '',
@@ -62,6 +56,7 @@ class CompanyController extends Controller
             'companyContactCell' => '',
         ]);
         $company = Company::create($request->only([
+            'name',
             'ct_email',
             'ct_fname',
             'ct_lname',
@@ -78,22 +73,6 @@ class CompanyController extends Controller
             ]);
         }
 
-        $user = $company->user()->create($request->only([
-            'name',
-            'email',
-            'password',
-            'dob',
-            'address',
-            'city',
-            'state',
-            'zip',
-            'phone',
-            'timezone',
-            'notification_email',
-            'notification_sms',
-            'notification_push',
-        ]));
-        $user->assignRole('company');
         return redirect()->route('admin.companies.edit', $company->id)->with('success', 'Company created successfully.');
     }
 
@@ -122,44 +101,18 @@ class CompanyController extends Controller
         //
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($company->user->id),
-            ],
-            'dob' => 'date',
-            'password' => 'nullable|string|min:8',
-            'address' => '',
-            'city' => '',
-            'state' => '',
-            'zip' => '',
-            'phone' => '',
-            'timezone' => '',
-            'notification_email' => '',
-            'notification_sms' => '',
-            'notification_push' => ''
+            'ct_email' => 'nullable|email',
+            'ct_fname' => '',
+            'ct_lname' => '',
+            'dot' => '',
+            'companyContactName' => '',
+            'companyContactEmail' => '',
+            'companyContactPhone' => '',
+            'companyContactCell' => '',
         ]);
-        $request->merge([
-            'notification_email' => $request->has('notification_email'),
-            'notification_sms' => $request->has('notification_sms'),
-            'notification_push' => $request->has('notification_push'),
-        ]);
-        $company->user()->update($request->only([
-            'name',
-            'email',
-            'dob',
-            'address',
-            'city',
-            'state',
-            'zip',
-            'phone',
-            'timezone',
-            'notification_email',
-            'notification_sms',
-            'notification_push',
-        ]+ ($request->password ? ['password'] : [])));
 
         $company->update($request->only([
+            'name',
             'ct_email',
             'ct_fname',
             'ct_lname',

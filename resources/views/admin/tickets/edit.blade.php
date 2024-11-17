@@ -867,9 +867,9 @@
                 .then(function (data) {
                     return data.map(function (company) {
                         return {
-                            value: company.roleable.id,
+                            value: company.id,
                             label: company.name,
-                            selected: {{ old('company_id', $ticket->company_id) }} === company.roleable.id,
+                            selected: {{ old('company_id', $ticket->company_id) }} === company.id
                         };
                     });
                 });
@@ -928,7 +928,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css">
     <link rel="stylesheet" href="{{ asset('css/plugins/flatpickr.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/plugins/dropzone.css') }}" />
-    <link href="https://cdn.jsdelivr.net/npm/viewerjs@1.10.1/dist/viewer.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/plugins/choices.min.css') }}" />
     <style>
         .marker {
             width: 24px;

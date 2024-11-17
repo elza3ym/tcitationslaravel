@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     protected $fillable = [
+        'name',
         'ct_email',
         'ct_fname',
         'ct_lname',
@@ -20,7 +21,9 @@ class Company extends Model
 
     public function managers()
     {
-        return $this->belongsToMany(Manager::class, 'company_manager');
+        return $this->belongsToMany(Manager::class)
+            ->withPivot('is_write_access')
+            ->withTimestamps();
     }
 
     public function tickets() {

@@ -1,8 +1,9 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route(\Illuminate\Support\Facades\Auth::user()->roles->first()->name.'.managers.store') }}" method="POST">
+        <form action="{{ route(\Illuminate\Support\Facades\Auth::user()->roles->first()->name.'.managers.update', $manager->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="card">
                 <div class="card-body !py-0">
                     <ul class="flex flex-wrap w-full font-medium text-center nav-tabs">
@@ -58,7 +59,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="name">Name</label>
-                                                <input type="text"  name="name" id="name" class="form-control" value="{{ old('name') }}" required autofocus />
+                                                <input type="text"  name="name" id="name" class="form-control" value="{{ old('name', $manager->user->name) }}" required autofocus />
                                                 @if ($errors->has('name'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('name') }}</strong>
@@ -69,7 +70,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="email">Email</label>
-                                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required />
+                                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $manager->user->email) }}" required/>
                                                 @if ($errors->has('email'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('email') }}</strong>
@@ -91,7 +92,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="phone">Phone</label>
-                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" />
+                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', $manager->user->phone) }}" />
                                                 @if ($errors->has('phone'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('phone') }}</strong>
@@ -104,7 +105,7 @@
                                                 <label class="form-label" for="dateOfBirth">Date of birth</label>
                                                 <div class="input-group date">
                                                     <input type="text" name="dob" class="form-control" placeholder="Select date"
-                                                           id="dateOfBirth" value="{{ old('dob') }}"/>
+                                                           id="dateOfBirth" value="{{ old('dob', $manager->user->dob) }}"/>
                                                     <span class="input-group-text">
                                                           <i class="feather icon-calendar"></i>
                                                         </span>
@@ -119,7 +120,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="address">Address</label>
-                                                <input type="text" name="address" id="address" class="form-control" value="{{ old('address') }}" />
+                                                <input type="text" name="address" id="address" class="form-control" value="{{ old('address', $manager->user->address) }}" />
                                                 @if ($errors->has('address'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('address') }}</strong>
@@ -130,7 +131,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="city">City</label>
-                                                <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}" />
+                                                <input type="text" name="city" id="city" class="form-control" value="{{ old('city', $manager->user->city) }}" />
                                                 @if ($errors->has('city'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('city') }}</strong>
@@ -142,57 +143,57 @@
                                             <div class="mb-3">
                                                 <label class="form-label" for="state">State</label>
                                                 <select class="form-control" name="state" data-trigger name="state" id="state">
-                                                    <option value="AL" {{ old('state') == 'AL' ? 'selected' : '' }}>Alabama</option>
-                                                    <option value="AK" {{ old('state') == 'AK' ? 'selected' : '' }}>Alaska</option>
-                                                    <option value="AZ" {{ old('state') == 'AZ' ? 'selected' : '' }}>Arizona</option>
-                                                    <option value="AR" {{ old('state') == 'AR' ? 'selected' : '' }}>Arkansas</option>
-                                                    <option value="CA" {{ old('state') == 'CA' ? 'selected' : '' }}>California</option>
-                                                    <option value="CO" {{ old('state') == 'CO' ? 'selected' : '' }}>Colorado</option>
-                                                    <option value="CT" {{ old('state') == 'CT' ? 'selected' : '' }}>Connecticut</option>
-                                                    <option value="DE" {{ old('state') == 'DE' ? 'selected' : '' }}>Delaware</option>
-                                                    <option value="DC" {{ old('state') == 'DC' ? 'selected' : '' }}>District Of Columbia</option>
-                                                    <option value="FL" {{ old('state') == 'FL' ? 'selected' : '' }}>Florida</option>
-                                                    <option value="GA" {{ old('state') == 'GA' ? 'selected' : '' }}>Georgia</option>
-                                                    <option value="HI" {{ old('state') == 'HI' ? 'selected' : '' }}>Hawaii</option>
-                                                    <option value="ID" {{ old('state') == 'ID' ? 'selected' : '' }}>Idaho</option>
-                                                    <option value="IL" {{ old('state') == 'IL' ? 'selected' : '' }}>Illinois</option>
-                                                    <option value="IN" {{ old('state') == 'IN' ? 'selected' : '' }}>Indiana</option>
-                                                    <option value="IA" {{ old('state') == 'IA' ? 'selected' : '' }}>Iowa</option>
-                                                    <option value="KS" {{ old('state') == 'KS' ? 'selected' : '' }}>Kansas</option>
-                                                    <option value="KY" {{ old('state') == 'KY' ? 'selected' : '' }}>Kentucky</option>
-                                                    <option value="LA" {{ old('state') == 'LA' ? 'selected' : '' }}>Louisiana</option>
-                                                    <option value="ME" {{ old('state') == 'ME' ? 'selected' : '' }}>Maine</option>
-                                                    <option value="MD" {{ old('state') == 'MD' ? 'selected' : '' }}>Maryland</option>
-                                                    <option value="MA" {{ old('state') == 'MA' ? 'selected' : '' }}>Massachusetts</option>
-                                                    <option value="MI" {{ old('state') == 'MI' ? 'selected' : '' }}>Michigan</option>
-                                                    <option value="MN" {{ old('state') == 'MN' ? 'selected' : '' }}>Minnesota</option>
-                                                    <option value="MS" {{ old('state') == 'MS' ? 'selected' : '' }}>Mississippi</option>
-                                                    <option value="MO" {{ old('state') == 'MO' ? 'selected' : '' }}>Missouri</option>
-                                                    <option value="MT" {{ old('state') == 'MT' ? 'selected' : '' }}>Montana</option>
-                                                    <option value="NE" {{ old('state') == 'NE' ? 'selected' : '' }}>Nebraska</option>
-                                                    <option value="NV" {{ old('state') == 'NV' ? 'selected' : '' }}>Nevada</option>
-                                                    <option value="NH" {{ old('state') == 'NH' ? 'selected' : '' }}>New Hampshire</option>
-                                                    <option value="NJ" {{ old('state') == 'NJ' ? 'selected' : '' }}>New Jersey</option>
-                                                    <option value="NM" {{ old('state') == 'NM' ? 'selected' : '' }}>New Mexico</option>
-                                                    <option value="NY" {{ old('state') == 'NY' ? 'selected' : '' }}>New York</option>
-                                                    <option value="NC" {{ old('state') == 'NC' ? 'selected' : '' }}>North Carolina</option>
-                                                    <option value="ND" {{ old('state') == 'ND' ? 'selected' : '' }}>North Dakota</option>
-                                                    <option value="OH" {{ old('state') == 'OH' ? 'selected' : '' }}>Ohio</option>
-                                                    <option value="OK" {{ old('state') == 'OK' ? 'selected' : '' }}>Oklahoma</option>
-                                                    <option value="OR" {{ old('state') == 'OR' ? 'selected' : '' }}>Oregon</option>
-                                                    <option value="PA" {{ old('state') == 'PA' ? 'selected' : '' }}>Pennsylvania</option>
-                                                    <option value="RI" {{ old('state') == 'RI' ? 'selected' : '' }}>Rhode Island</option>
-                                                    <option value="SC" {{ old('state') == 'SC' ? 'selected' : '' }}>South Carolina</option>
-                                                    <option value="SD" {{ old('state') == 'SD' ? 'selected' : '' }}>South Dakota</option>
-                                                    <option value="TN" {{ old('state') == 'TN' ? 'selected' : '' }}>Tennessee</option>
-                                                    <option value="TX" {{ old('state') == 'TX' ? 'selected' : '' }}>Texas</option>
-                                                    <option value="UT" {{ old('state') == 'UT' ? 'selected' : '' }}>Utah</option>
-                                                    <option value="VT" {{ old('state') == 'VT' ? 'selected' : '' }}>Vermont</option>
-                                                    <option value="VA" {{ old('state') == 'VA' ? 'selected' : '' }}>Virginia</option>
-                                                    <option value="WA" {{ old('state') == 'WA' ? 'selected' : '' }}>Washington</option>
-                                                    <option value="WV" {{ old('state') == 'WV' ? 'selected' : '' }}>West Virginia</option>
-                                                    <option value="WI" {{ old('state') == 'WI' ? 'selected' : '' }}>Wisconsin</option>
-                                                    <option value="WY" {{ old('state') == 'WY' ? 'selected' : '' }}>Wyoming</option>
+                                                    <option value="AL" {{ old('state', $manager->user->state) == 'AL' ? 'selected' : '' }}>Alabama</option>
+                                                    <option value="AK" {{ old('state', $manager->user->state) == 'AK' ? 'selected' : '' }}>Alaska</option>
+                                                    <option value="AZ" {{ old('state', $manager->user->state) == 'AZ' ? 'selected' : '' }}>Arizona</option>
+                                                    <option value="AR" {{ old('state', $manager->user->state) == 'AR' ? 'selected' : '' }}>Arkansas</option>
+                                                    <option value="CA" {{ old('state', $manager->user->state) == 'CA' ? 'selected' : '' }}>California</option>
+                                                    <option value="CO" {{ old('state', $manager->user->state) == 'CO' ? 'selected' : '' }}>Colorado</option>
+                                                    <option value="CT" {{ old('state', $manager->user->state) == 'CT' ? 'selected' : '' }}>Connecticut</option>
+                                                    <option value="DE" {{ old('state', $manager->user->state) == 'DE' ? 'selected' : '' }}>Delaware</option>
+                                                    <option value="DC" {{ old('state', $manager->user->state) == 'DC' ? 'selected' : '' }}>District Of Columbia</option>
+                                                    <option value="FL" {{ old('state', $manager->user->state) == 'FL' ? 'selected' : '' }}>Florida</option>
+                                                    <option value="GA" {{ old('state', $manager->user->state) == 'GA' ? 'selected' : '' }}>Georgia</option>
+                                                    <option value="HI" {{ old('state', $manager->user->state) == 'HI' ? 'selected' : '' }}>Hawaii</option>
+                                                    <option value="ID" {{ old('state', $manager->user->state) == 'ID' ? 'selected' : '' }}>Idaho</option>
+                                                    <option value="IL" {{ old('state', $manager->user->state) == 'IL' ? 'selected' : '' }}>Illinois</option>
+                                                    <option value="IN" {{ old('state', $manager->user->state) == 'IN' ? 'selected' : '' }}>Indiana</option>
+                                                    <option value="IA" {{ old('state', $manager->user->state) == 'IA' ? 'selected' : '' }}>Iowa</option>
+                                                    <option value="KS" {{ old('state', $manager->user->state) == 'KS' ? 'selected' : '' }}>Kansas</option>
+                                                    <option value="KY" {{ old('state', $manager->user->state) == 'KY' ? 'selected' : '' }}>Kentucky</option>
+                                                    <option value="LA" {{ old('state', $manager->user->state) == 'LA' ? 'selected' : '' }}>Louisiana</option>
+                                                    <option value="ME" {{ old('state', $manager->user->state) == 'ME' ? 'selected' : '' }}>Maine</option>
+                                                    <option value="MD" {{ old('state', $manager->user->state) == 'MD' ? 'selected' : '' }}>Maryland</option>
+                                                    <option value="MA" {{ old('state', $manager->user->state) == 'MA' ? 'selected' : '' }}>Massachusetts</option>
+                                                    <option value="MI" {{ old('state', $manager->user->state) == 'MI' ? 'selected' : '' }}>Michigan</option>
+                                                    <option value="MN" {{ old('state', $manager->user->state) == 'MN' ? 'selected' : '' }}>Minnesota</option>
+                                                    <option value="MS" {{ old('state', $manager->user->state) == 'MS' ? 'selected' : '' }}>Mississippi</option>
+                                                    <option value="MO" {{ old('state', $manager->user->state) == 'MO' ? 'selected' : '' }}>Missouri</option>
+                                                    <option value="MT" {{ old('state', $manager->user->state) == 'MT' ? 'selected' : '' }}>Montana</option>
+                                                    <option value="NE" {{ old('state', $manager->user->state) == 'NE' ? 'selected' : '' }}>Nebraska</option>
+                                                    <option value="NV" {{ old('state', $manager->user->state) == 'NV' ? 'selected' : '' }}>Nevada</option>
+                                                    <option value="NH" {{ old('state', $manager->user->state) == 'NH' ? 'selected' : '' }}>New Hampshire</option>
+                                                    <option value="NJ" {{ old('state', $manager->user->state) == 'NJ' ? 'selected' : '' }}>New Jersey</option>
+                                                    <option value="NM" {{ old('state', $manager->user->state) == 'NM' ? 'selected' : '' }}>New Mexico</option>
+                                                    <option value="NY" {{ old('state', $manager->user->state) == 'NY' ? 'selected' : '' }}>New York</option>
+                                                    <option value="NC" {{ old('state', $manager->user->state) == 'NC' ? 'selected' : '' }}>North Carolina</option>
+                                                    <option value="ND" {{ old('state', $manager->user->state) == 'ND' ? 'selected' : '' }}>North Dakota</option>
+                                                    <option value="OH" {{ old('state', $manager->user->state) == 'OH' ? 'selected' : '' }}>Ohio</option>
+                                                    <option value="OK" {{ old('state', $manager->user->state) == 'OK' ? 'selected' : '' }}>Oklahoma</option>
+                                                    <option value="OR" {{ old('state', $manager->user->state) == 'OR' ? 'selected' : '' }}>Oregon</option>
+                                                    <option value="PA" {{ old('state', $manager->user->state) == 'PA' ? 'selected' : '' }}>Pennsylvania</option>
+                                                    <option value="RI" {{ old('state', $manager->user->state) == 'RI' ? 'selected' : '' }}>Rhode Island</option>
+                                                    <option value="SC" {{ old('state', $manager->user->state) == 'SC' ? 'selected' : '' }}>South Carolina</option>
+                                                    <option value="SD" {{ old('state', $manager->user->state) == 'SD' ? 'selected' : '' }}>South Dakota</option>
+                                                    <option value="TN" {{ old('state', $manager->user->state) == 'TN' ? 'selected' : '' }}>Tennessee</option>
+                                                    <option value="TX" {{ old('state', $manager->user->state) == 'TX' ? 'selected' : '' }}>Texas</option>
+                                                    <option value="UT" {{ old('state', $manager->user->state) == 'UT' ? 'selected' : '' }}>Utah</option>
+                                                    <option value="VT" {{ old('state', $manager->user->state) == 'VT' ? 'selected' : '' }}>Vermont</option>
+                                                    <option value="VA" {{ old('state', $manager->user->state) == 'VA' ? 'selected' : '' }}>Virginia</option>
+                                                    <option value="WA" {{ old('state', $manager->user->state) == 'WA' ? 'selected' : '' }}>Washington</option>
+                                                    <option value="WV" {{ old('state', $manager->user->state) == 'WV' ? 'selected' : '' }}>West Virginia</option>
+                                                    <option value="WI" {{ old('state', $manager->user->state) == 'WI' ? 'selected' : '' }}>Wisconsin</option>
+                                                    <option value="WY" {{ old('state', $manager->user->state) == 'WY' ? 'selected' : '' }}>Wyoming</option>
                                                 </select>
                                                 @if ($errors->has('state'))
                                                     <span class="invalid-feedback text-danger">
@@ -204,7 +205,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="zip">Zip code</label>
-                                                <input type="text" name="zip" id="zip" class="form-control" value="{{ old('zip') }}"/>
+                                                <input type="text" name="zip" id="zip" class="form-control" value="{{ old('zip', $manager->user->zip) }}"/>
                                                 @if ($errors->has('zip'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('zip') }}</strong>
@@ -217,31 +218,31 @@
                                                 <label class="form-label" for="timezone">Timezone</label>
                                                 <select name="timezone" id="timezone" class="form-control">
                                                     <option value="">Select a Timezone</option>
-                                                    <option value="UTC-12:00" {{ old('timezone') == 'UTC-12:00' ? 'selected' : '' }}>(UTC-12:00) International Date Line West</option>
-                                                    <option value="UTC-11:00" {{ old('timezone') == 'UTC-11:00' ? 'selected' : '' }}>(UTC-11:00) Coordinated Universal Time-11</option>
-                                                    <option value="UTC-10:00" {{ old('timezone') == 'UTC-10:00' ? 'selected' : '' }}>(UTC-10:00) Hawaii</option>
-                                                    <option value="UTC-09:00" {{ old('timezone') == 'UTC-09:00' ? 'selected' : '' }}>(UTC-09:00) Alaska</option>
-                                                    <option value="UTC-08:00" {{ old('timezone') == 'UTC-08:00' ? 'selected' : '' }}>(UTC-08:00) Pacific Time (US & Canada)</option>
-                                                    <option value="UTC-07:00" {{ old('timezone') == 'UTC-07:00' ? 'selected' : '' }}>(UTC-07:00) Mountain Time (US & Canada)</option>
-                                                    <option value="UTC-06:00" {{ old('timezone') == 'UTC-06:00' ? 'selected' : '' }}>(UTC-06:00) Central Time (US & Canada)</option>
-                                                    <option value="UTC-05:00" {{ old('timezone') == 'UTC-05:00' ? 'selected' : '' }}>(UTC-05:00) Eastern Time (US & Canada)</option>
-                                                    <option value="UTC-04:00" {{ old('timezone') == 'UTC-04:00' ? 'selected' : '' }}>(UTC-04:00) Atlantic Time (Canada)</option>
-                                                    <option value="UTC-03:00" {{ old('timezone') == 'UTC-03:00' ? 'selected' : '' }}>(UTC-03:00) Greenland</option>
-                                                    <option value="UTC-02:00" {{ old('timezone') == 'UTC-02:00' ? 'selected' : '' }}>(UTC-02:00) Mid-Atlantic</option>
-                                                    <option value="UTC-01:00" {{ old('timezone') == 'UTC-01:00' ? 'selected' : '' }}>(UTC-01:00) Azores</option>
-                                                    <option value="UTC+00:00" {{ old('timezone') == 'UTC+00:00' ? 'selected' : '' }}>(UTC+00:00) Coordinated Universal Time</option>
-                                                    <option value="UTC+01:00" {{ old('timezone') == 'UTC+01:00' ? 'selected' : '' }}>(UTC+01:00) Amsterdam, Berlin, Rome</option>
-                                                    <option value="UTC+02:00" {{ old('timezone') == 'UTC+02:00' ? 'selected' : '' }}>(UTC+02:00) Cairo, Jerusalem</option>
-                                                    <option value="UTC+03:00" {{ old('timezone') == 'UTC+03:00' ? 'selected' : '' }}>(UTC+03:00) Moscow, Nairobi</option>
-                                                    <option value="UTC+04:00" {{ old('timezone') == 'UTC+04:00' ? 'selected' : '' }}>(UTC+04:00) Dubai</option>
-                                                    <option value="UTC+05:00" {{ old('timezone') == 'UTC+05:00' ? 'selected' : '' }}>(UTC+05:00) Islamabad, Karachi</option>
-                                                    <option value="UTC+06:00" {{ old('timezone') == 'UTC+06:00' ? 'selected' : '' }}>(UTC+06:00) Dhaka</option>
-                                                    <option value="UTC+07:00" {{ old('timezone') == 'UTC+07:00' ? 'selected' : '' }}>(UTC+07:00) Bangkok, Hanoi</option>
-                                                    <option value="UTC+08:00" {{ old('timezone') == 'UTC+08:00' ? 'selected' : '' }}>(UTC+08:00) Beijing, Singapore</option>
-                                                    <option value="UTC+09:00" {{ old('timezone') == 'UTC+09:00' ? 'selected' : '' }}>(UTC+09:00) Tokyo, Seoul</option>
-                                                    <option value="UTC+10:00" {{ old('timezone') == 'UTC+10:00' ? 'selected' : '' }}>(UTC+10:00) Sydney, Vladivostok</option>
-                                                    <option value="UTC+11:00" {{ old('timezone') == 'UTC+11:00' ? 'selected' : '' }}>(UTC+11:00) Solomon Islands</option>
-                                                    <option value="UTC+12:00" {{ old('timezone') == 'UTC+12:00' ? 'selected' : '' }}>(UTC+12:00) Fiji, Auckland</option>
+                                                    <option value="UTC-12:00" {{ old('timezone', $manager->user->timezone) == 'UTC-12:00' ? 'selected' : '' }}>(UTC-12:00) International Date Line West</option>
+                                                    <option value="UTC-11:00" {{ old('timezone', $manager->user->timezone) == 'UTC-11:00' ? 'selected' : '' }}>(UTC-11:00) Coordinated Universal Time-11</option>
+                                                    <option value="UTC-10:00" {{ old('timezone', $manager->user->timezone) == 'UTC-10:00' ? 'selected' : '' }}>(UTC-10:00) Hawaii</option>
+                                                    <option value="UTC-09:00" {{ old('timezone', $manager->user->timezone) == 'UTC-09:00' ? 'selected' : '' }}>(UTC-09:00) Alaska</option>
+                                                    <option value="UTC-08:00" {{ old('timezone', $manager->user->timezone) == 'UTC-08:00' ? 'selected' : '' }}>(UTC-08:00) Pacific Time (US & Canada)</option>
+                                                    <option value="UTC-07:00" {{ old('timezone', $manager->user->timezone) == 'UTC-07:00' ? 'selected' : '' }}>(UTC-07:00) Mountain Time (US & Canada)</option>
+                                                    <option value="UTC-06:00" {{ old('timezone', $manager->user->timezone) == 'UTC-06:00' ? 'selected' : '' }}>(UTC-06:00) Central Time (US & Canada)</option>
+                                                    <option value="UTC-05:00" {{ old('timezone', $manager->user->timezone) == 'UTC-05:00' ? 'selected' : '' }}>(UTC-05:00) Eastern Time (US & Canada)</option>
+                                                    <option value="UTC-04:00" {{ old('timezone', $manager->user->timezone) == 'UTC-04:00' ? 'selected' : '' }}>(UTC-04:00) Atlantic Time (Canada)</option>
+                                                    <option value="UTC-03:00" {{ old('timezone', $manager->user->timezone) == 'UTC-03:00' ? 'selected' : '' }}>(UTC-03:00) Greenland</option>
+                                                    <option value="UTC-02:00" {{ old('timezone', $manager->user->timezone) == 'UTC-02:00' ? 'selected' : '' }}>(UTC-02:00) Mid-Atlantic</option>
+                                                    <option value="UTC-01:00" {{ old('timezone', $manager->user->timezone) == 'UTC-01:00' ? 'selected' : '' }}>(UTC-01:00) Azores</option>
+                                                    <option value="UTC+00:00" {{ old('timezone', $manager->user->timezone) == 'UTC+00:00' ? 'selected' : '' }}>(UTC+00:00) Coordinated Universal Time</option>
+                                                    <option value="UTC+01:00" {{ old('timezone', $manager->user->timezone) == 'UTC+01:00' ? 'selected' : '' }}>(UTC+01:00) Amsterdam, Berlin, Rome</option>
+                                                    <option value="UTC+02:00" {{ old('timezone', $manager->user->timezone) == 'UTC+02:00' ? 'selected' : '' }}>(UTC+02:00) Cairo, Jerusalem</option>
+                                                    <option value="UTC+03:00" {{ old('timezone', $manager->user->timezone) == 'UTC+03:00' ? 'selected' : '' }}>(UTC+03:00) Moscow, Nairobi</option>
+                                                    <option value="UTC+04:00" {{ old('timezone', $manager->user->timezone) == 'UTC+04:00' ? 'selected' : '' }}>(UTC+04:00) Dubai</option>
+                                                    <option value="UTC+05:00" {{ old('timezone', $manager->user->timezone) == 'UTC+05:00' ? 'selected' : '' }}>(UTC+05:00) Islamabad, Karachi</option>
+                                                    <option value="UTC+06:00" {{ old('timezone', $manager->user->timezone) == 'UTC+06:00' ? 'selected' : '' }}>(UTC+06:00) Dhaka</option>
+                                                    <option value="UTC+07:00" {{ old('timezone', $manager->user->timezone) == 'UTC+07:00' ? 'selected' : '' }}>(UTC+07:00) Bangkok, Hanoi</option>
+                                                    <option value="UTC+08:00" {{ old('timezone', $manager->user->timezone) == 'UTC+08:00' ? 'selected' : '' }}>(UTC+08:00) Beijing, Singapore</option>
+                                                    <option value="UTC+09:00" {{ old('timezone', $manager->user->timezone) == 'UTC+09:00' ? 'selected' : '' }}>(UTC+09:00) Tokyo, Seoul</option>
+                                                    <option value="UTC+10:00" {{ old('timezone', $manager->user->timezone) == 'UTC+10:00' ? 'selected' : '' }}>(UTC+10:00) Sydney, Vladivostok</option>
+                                                    <option value="UTC+11:00" {{ old('timezone', $manager->user->timezone) == 'UTC+11:00' ? 'selected' : '' }}>(UTC+11:00) Solomon Islands</option>
+                                                    <option value="UTC+12:00" {{ old('timezone', $manager->user->timezone) == 'UTC+12:00' ? 'selected' : '' }}>(UTC+12:00) Fiji, Auckland</option>
                                                 </select>
                                                 @if ($errors->has('timezone'))
                                                     <span class="invalid-feedback text-danger">
@@ -275,7 +276,7 @@
                                             </div>
                                             <div class="form-check form-switch p-0">
                                                 <input class="form-check-input h4 position-relative m-0" type="checkbox"
-                                                       name="notification_email" role="switch" {{ old('notification_email') ? 'checked' : '' }}/>
+                                                       name="notification_email" role="switch" {{ old('notification_email', $manager->user->notification_email) ? 'checked' : '' }}/>
                                             </div>
                                         </div>
                                     </div>
@@ -287,7 +288,7 @@
                                             </div>
                                             <div class="form-check form-switch p-0">
                                                 <input class="form-check-input h4 position-relative m-0" type="checkbox"
-                                                       name="notification_sms" role="switch" {{ old('notification_sms') ? 'checked' : '' }}/>
+                                                       name="notification_sms" role="switch" {{ old('notification_sms', $manager->user->notification_sms) ? 'checked' : '' }}/>
                                             </div>
                                         </div>
                                     </div>
@@ -299,7 +300,7 @@
                                             </div>
                                             <div class="form-check form-switch p-0">
                                                 <input class="form-check-input h4 position-relative m-0" type="checkbox"
-                                                       name="notification_push" role="switch" {{ old('notification_push') ? 'checked' : '' }}/>
+                                                       name="notification_push" role="switch" {{ old('notification_push', $manager->user->notification_push) ? 'checked' : '' }}/>
                                             </div>
                                         </div>
                                     </div>
@@ -362,32 +363,53 @@
                     </div>
                     <div class="grid grid-cols-12 gap-1" id="companyManagersList">
                         @if (old('managerCompany_id'))
-                        @foreach(old('managerCompany_id') as $index => $managerCompany)
-                        <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
-                            <div class="card">
-                                <div class="card-body flex justify-between align-middle items-center">
-                                    <div class="font-bold">
-                                        <h5 class="mb-3 block">{{ old('managerCompany_name')[$index] }}</h5>
-                                        <span class="ti {{ old('managerCompany_name')[$index] === 'Yes' ?  'text-success ti-check' : 'text-danger ti-x'}} text-right text-[20px]"></span> Write Access
-                                    </div>
-                                    <div class="text-right">
-                                        <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-trash text-xl leading-none"></i>
-                                        </a>
+                            @foreach(old('managerCompany_id') as $index => $managerCompany)
+                                <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
+                                    <div class="card">
+                                        <div class="card-body flex justify-between align-middle items-center">
+                                            <div class="font-bold">
+                                                <h5 class="mb-3 block">{{ old('managerCompany_name')[$index] }}</h5>
+                                                <span class="ti {{ old('managerCompany_name')[$index] === 'Yes' ?  'text-success ti-check' : 'text-danger ti-x'}} text-right text-[20px]"></span> Write Access
+                                            </div>
+                                            <div class="text-right">
+                                                <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                    <i class="ti ti-trash text-xl leading-none"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="managerCompany_id[]" value="{{ old('managerCompany_id')[$index] }}">
+                                        <input type="hidden" name="managerCompany_name[]" value="{{ old('managerCompany_name')[$index] }}">
+                                        <input type="hidden" name="managerCompany_isWrite[]" value="{{ old('managerCompany_isWrite')[$index] }}">
                                     </div>
                                 </div>
-                                <input type="hidden" name="managerCompany_id[]" value="{{ old('managerCompany_id')[$index] }}">
-                                <input type="hidden" name="managerCompany_name[]" value="{{ old('managerCompany_name')[$index] }}">
-                                <input type="hidden" name="managerCompany_isWrite[]" value="{{ old('managerCompany_isWrite')[$index] }}">
-                            </div>
-                        </div>
-                        @endforeach
+                            @endforeach
+                        @else
+                            @foreach($manager->companies as $managerCompany)
+                                <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
+                                    <div class="card">
+                                        <div class="card-body flex justify-between align-middle items-center">
+                                            <div class="font-bold">
+                                                <h5 class="mb-3 block">{{ $managerCompany->name }}</h5>
+                                                <span class="ti {{ $managerCompany->pivot->is_write_access ?  'text-success ti-check' : 'text-danger ti-x'}} text-right text-[20px]"></span> Write Access
+                                            </div>
+                                            <div class="text-right">
+                                                <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                    <i class="ti ti-trash text-xl leading-none"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="managerCompany_id[]" value="{{ $managerCompany->id }}">
+                                        <input type="hidden" name="managerCompany_name[]" value="{{ $managerCompany->name }}">
+                                        <input type="hidden" name="managerCompany_isWrite[]" value="{{ $managerCompany->pivot->is_write_access ? 'Yes' : 'No' }}">
+                                    </div>
+                                </div>
+                            @endforeach
                         @endif
                     </div>
                 </div>
                 <div class="col-span-12 text-right">
                     <button type="reset" class="btn btn-outline-secondary mx-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1">Create Manager</button>
+                    <button type="submit" class="btn btn-primary mx-1">Update Manager</button>
                 </div>
             </div>
         </form>

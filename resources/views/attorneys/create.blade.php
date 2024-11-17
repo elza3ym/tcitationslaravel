@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route(\Illuminate\Support\Facades\Auth::user()->roles->first()->name.'.managers.store') }}" method="POST">
+        <form action="{{ route('admin.attorneys.store') }}" method="POST">
             @csrf
             <div class="card">
                 <div class="card-body !py-0">
@@ -32,11 +32,11 @@
                             <a
                                 href="javascript:void(0);"
                                 data-pc-toggle="tab"
-                                data-pc-target="companiesTab"
+                                data-pc-target="officeHoursTab"
                                 class="inline-flex items-center mr-6 py-4 transition-all duration-300 ease-linear border-t-2 border-b-2 border-transparent group-[.active]:text-primary-500 group-[.active]:border-b-primary-500 hover:text-primary-500 active:text-primary-500"
                             >
-                                <i class="ti ti-building ltr:mr-2 rtl:ml-2 text-lg leading-none"></i>
-                                Manager Companies
+                                <i class="ti ti-clock ltr:mr-2 rtl:ml-2 text-lg leading-none"></i>
+                                Office Hours
                             </a>
                         </li>
                     </ul>
@@ -309,85 +309,49 @@
                         </div>
                     </div>
                 </div>
-                <div class="hidden tab-pane" id="companiesTab">
+                <div class="hidden tab-pane" id="officeHoursTab">
                     <div class="grid grid-cols-12 gap-6">
                         <div class="col-span-12 lg:col-span-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>Manager Companies</h5>
+                                    <h5>Office Hours</h5>
                                     <span class="text-muted text-sm">
-                                        {{ __("Companies that this manager can access data for.") }}
+                                        {{ __("Attorney office hours he's available.") }}
                                     </span>
                                 </div>
                                 <div class="card-body">
                                     <div class="grid grid-cols-12 gap-6 items-center">
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
-                                                <label class="form-label">Company</label>
-                                                <select
-                                                    class="form-control"
-                                                    name="company_id"
-                                                    id="companies"
-                                                ></select>
-                                                @if ($errors->has('company_id'))
+                                                <label class="form-label" for="officeHoursStart">Office Hours Start</label>
+                                                <input type="text" name="office_hours_start" id="officeHoursStart" class="form-control" value="{{ old('office_hours_start') }}" />
+                                                @if ($errors->has('office_hours_start'))
                                                     <span class="invalid-feedback text-danger">
-                                                    <strong>{{ $errors->first('company_id') }}</strong>
-                                                </span>
+                                                        <strong>{{ $errors->first('office_hours_start') }}</strong>
+                                                    </span>
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-span-12 sm:col-span-2">
+                                        <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="write_access">Write Access ?</label>
-                                                <div class="form-check form-switch">
-                                                    <input
-                                                        id="writeAccess"
-                                                        class="form-check-input h4 position-relative m-0"
-                                                        type="checkbox"
-                                                        role="switch"
-                                                        value="Yes"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-span-12 sm:col-span-2">
-                                            <div class="mb-3 mt-5">
-                                                <button class="btn btn-primary px-6" id="addCompanyToManager">Add</button>
+                                                <label class="form-label" for="officeHoursEnd">Office Hours End</label>
+                                                <input type="text" name="office_hours_end" id="officeHoursEnd" class="form-control" value="{{ old('office_hours_end') }}" />
+                                                @if ($errors->has('office_hours_end'))
+                                                    <span class="invalid-feedback text-danger">
+                                                        <strong>{{ $errors->first('office_hours_end') }}</strong>
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="grid grid-cols-12 gap-1" id="companyManagersList">
-                        @if (old('managerCompany_id'))
-                        @foreach(old('managerCompany_id') as $index => $managerCompany)
-                        <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
-                            <div class="card">
-                                <div class="card-body flex justify-between align-middle items-center">
-                                    <div class="font-bold">
-                                        <h5 class="mb-3 block">{{ old('managerCompany_name')[$index] }}</h5>
-                                        <span class="ti {{ old('managerCompany_name')[$index] === 'Yes' ?  'text-success ti-check' : 'text-danger ti-x'}} text-right text-[20px]"></span> Write Access
-                                    </div>
-                                    <div class="text-right">
-                                        <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-trash text-xl leading-none"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="managerCompany_id[]" value="{{ old('managerCompany_id')[$index] }}">
-                                <input type="hidden" name="managerCompany_name[]" value="{{ old('managerCompany_name')[$index] }}">
-                                <input type="hidden" name="managerCompany_isWrite[]" value="{{ old('managerCompany_isWrite')[$index] }}">
-                            </div>
-                        </div>
-                        @endforeach
-                        @endif
                     </div>
                 </div>
                 <div class="col-span-12 text-right">
                     <button type="reset" class="btn btn-outline-secondary mx-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1">Create Manager</button>
+                    <button type="submit" class="btn btn-primary mx-1">Create Attorney</button>
                 </div>
             </div>
         </form>
@@ -398,90 +362,31 @@
     <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
     <script>
         flatpickr(document.querySelector('#dateOfBirth'));
-
-        var companiesChoices = new Choices('#companies', {
-            placeholder: true,
-            placeholderValue: 'Company Name',
-            maxItemCount: 5
-        })
-        companiesChoices.setChoices(function () {
-            return fetch('{{ route('api.company.index') }}')
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    return data.map(function (company) {
-                        return {
-                            value: company.id,
-                            label: company.name,
-                            selected: '{{ old('company_id') }}' === ''+company.id
-                        };
-                    });
-                });
+        // Initialize the start time picker
+        const startTimePicker = flatpickr("#officeHoursStart", {
+            noCalendar: true,
+            enableTime: true,
+            dateFormat: "H:i", // 24-hour format
+            time_24hr: true, // Use 24-hour format
+            onChange: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Set the min time for the end time picker based on the selected start time
+                    endTimePicker.set("minTime", dateStr);
+                }
+            }
         });
 
-        document.addEventListener('click', function (e) {
-            let addCompanyToManagerBtn = e.target.closest('#addCompanyToManager');
-            if (addCompanyToManagerBtn) {
-                e.preventDefault();
-                let selectedCompany = companiesChoices.getValue();
-                const writeAccessCheckbox = document.getElementById("writeAccess");
-                const hasWriteAccess = writeAccessCheckbox.checked ? "Yes" : "No";
-                let icon = writeAccessCheckbox.checked ? 'text-success ti-check' : 'text-danger ti-x';
-                if (!selectedCompany) {
-                    return Toast.fire({
-                        icon: 'info',
-                        title: 'Please select a company from company list.'
-                    });
+        // Initialize the end time picker
+        const endTimePicker = flatpickr("#officeHoursEnd", {
+            noCalendar: true,
+            enableTime: true,
+            dateFormat: "H:i", // 24-hour format
+            time_24hr: true, // Use 24-hour format
+            onChange: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Set the max time for the start time picker based on the selected end time
+                    startTimePicker.set("maxTime", dateStr);
                 }
-
-                let companyName = selectedCompany.label;
-                let companyId = selectedCompany.value;
-
-                // Check if the company is already added
-                const existingCompanies = document.querySelectorAll(
-                    '#companyManagersList input[name="managerCompany_id[]"]'
-                );
-                for (let existingCompany of existingCompanies) {
-                    if (Number(existingCompany.value) === Number(companyId)) {
-                        return Toast.fire({
-                            icon: 'info',
-                            title: 'This company is already added.'
-                        });
-                    }
-                }
-
-                // Template to add
-                const template = `
-                    <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
-                        <div class="card">
-                            <div class="card-body flex justify-between align-middle items-center">
-                                <div class="font-bold">
-                                    <h5 class="mb-3 block">${companyName}</h5>
-                                    <span class="ti ${icon} text-right text-[20px]"></span> Write Access
-                                </div>
-                                <div class="text-right">
-                                    <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary remove-entry">
-                                        <i class="ti ti-trash text-xl leading-none"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <input type="hidden" name="managerCompany_id[]" value="${companyId}">
-                            <input type="hidden" name="managerCompany_name[]" value="${companyName}">
-                            <input type="hidden" name="managerCompany_isWrite[]" value="${hasWriteAccess}">
-                        </div>
-                    </div>
-                `;
-
-                // Append the template to the container (adjust the container selector as needed)
-                const container = document.querySelector("#companyManagersList");
-                container.insertAdjacentHTML("beforeend", template);
-            }
-
-            let removeCompanyManagerBtn = e.target.closest('#removeCompanyManagerBtn');
-            if(removeCompanyManagerBtn) {
-                e.preventDefault();
-                e.target.closest('.company-manager-item').remove();
             }
         });
     </script>
@@ -489,5 +394,4 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css">
     <link rel="stylesheet" href="{{ asset('css/plugins/flatpickr.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/plugins/choices.min.css') }}" />
 @endsection

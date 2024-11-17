@@ -15,8 +15,6 @@ class TicketPolicy
     {
         if ($user->hasRole('admin')) {
             return true;
-        } else if ($user->hasRole('company')) {
-            $ticket->company_id === $user->roleable->id;
         } else if ($user->hasRole('manager')) {
             $managerCompaniesIds = $user->roleable->companies()->pulk('id')->toArray();
             return in_array($ticket->company_id, $managerCompaniesIds);
@@ -46,8 +44,11 @@ class TicketPolicy
         //
         if ($user->hasRole('admin')) {
             return true;
-        } else if ($user->hasRole('company')) {
-            $ticket->company_id === $user->roleable->id;
+        } else if ($user->hasRole('manager')) {
+            if ($user->can("write access for company {$ticket->company_id}")) {
+                return true;
+            }
+            return false;
         }
         return false;
     }
