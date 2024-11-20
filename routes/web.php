@@ -18,17 +18,25 @@ use App\Http\Controllers\Api\AttorneyController as APIAttorneyController;
 use App\Http\Controllers\Api\TicketAttachmentController as APITicketAttachmentController;
 use App\Http\Controllers\Api\TicketNoteController as APITicketNoteController;
 
-//DocumentViewer Library
-Route::any('ViewerJS/{all?}', function(){
-
-    return \Illuminate\Support\Facades\View::make('ViewerJS.index');
-});
-
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
-        return view('welcome');
+        return redirect('dashboard');
     });
+
+    Route::get('/dashboard', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if ($user->hasRole('admin')) {
+            return redirect(\route('admin.dashboard'));
+        } else if ($user->hasRole('manager')) {
+            return redirect(\route('manager.dashboard'));
+        } else if ($user->hasRole('attorney')) {
+            return redirect(\route('attorney.dashboard'));
+        } else if ($user->hasRole('driver')) {
+            return redirect(\route('driver.dashboard'));
+        }
+        abort(403);
+    })->middleware(['auth', 'verified'])->name('dashboard');
 
     // Admin Routes.
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
@@ -44,24 +52,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('drivers', DriverController::class);
     });
 
-    // Company Routes.
-    Route::group(['middleware' => 'role:company', 'prefix' => 'company', 'as' => 'company.'], function () {
-        Route::resource('tickets', CompanyTicketController::class);
-        Route::resource('companies', CompanyController::class);
-    });
-
     // Manager Routes
     Route::group(['middleware' => 'role:manager', 'prefix' => 'manager', 'as' => 'manager.'], function () {
+        Route::get('dashboard', [ManagerController::class, 'dashboard'])->name('dashboard');
+
         Route::resource('tickets', ManagerTicketController::class);
+        Route::resource('companies', CompanyController::class);
+        Route::resource('managers', ManagerController::class);
+        Route::resource('drivers', DriverController::class);
     });
 
     // Attorney Routes
     Route::group(['middleware' => 'role:attorney', 'prefix' => 'attorney', 'as' => 'attorney.'], function () {
+        Route::get('dashboard', [AttorneyController::class, 'dashboard'])->name('dashboard');
         Route::resource('tickets', AttorneyTicketController::class);
+        Route::resource('drivers', DriverController::class);
+
     });
 
     // Driver Routes
     Route::group(['middleware' => 'role:driver', 'prefix' => 'driver', 'as' => 'driver.'], function () {
+        Route::get('dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
         Route::resource('tickets', DriverTicketController::class);
     });
 });
@@ -96,12 +107,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'api', 'as' => 'api.'], functi
 
 
 
-
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

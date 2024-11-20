@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route(\Illuminate\Support\Facades\Auth::user()->roles->first()->name.'.managers.update', $manager->id) }}" method="POST">
+        <form action="{{ route(Auth::user()->roles->first()->name.'.managers.update', $manager->id) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="card">
@@ -424,7 +424,8 @@
         var companiesChoices = new Choices('#companies', {
             placeholder: true,
             placeholderValue: 'Company Name',
-            maxItemCount: 5
+            maxItemCount: 5,
+            shouldSort: false, // Optional: keeps the order of items as provided
         })
         companiesChoices.setChoices(function () {
             return fetch('{{ route('api.company.index') }}')
@@ -432,13 +433,18 @@
                     return response.json();
                 })
                 .then(function (data) {
-                    return data.map(function (company) {
+                    return [{
+                        value: '',
+                        label: 'Select an option',
+                        disabled: true,
+                        selected: {{ !old('company_id') ? 'true' : 'false' }} },
+                        ...data.map(function (company) {
                         return {
                             value: company.id,
                             label: company.name,
-                            selected: '{{ old('company_id') }}' === ''+company.id
+                            selected: Number('{{ old('company_id') }}') === Number(company.id)
                         };
-                    });
+                    })];
                 });
         });
 
@@ -450,7 +456,7 @@
                 const writeAccessCheckbox = document.getElementById("writeAccess");
                 const hasWriteAccess = writeAccessCheckbox.checked ? "Yes" : "No";
                 let icon = writeAccessCheckbox.checked ? 'text-success ti-check' : 'text-danger ti-x';
-                if (!selectedCompany) {
+                if (!selectedCompany || selectedCompany.value === "") {
                     return Toast.fire({
                         icon: 'info',
                         title: 'Please select a company from company list.'

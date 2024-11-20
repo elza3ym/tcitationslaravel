@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -73,7 +75,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.companies.edit', $company->id)->with('success', 'Company created successfully.');
+        return redirect()->route(auth()->user()->roles->first()->name.'.companies.edit', $company->id)->with('success', 'Company created successfully.');
     }
 
     /**
@@ -90,6 +92,7 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
         //
+        $this->authorize('update', $company);
         return view('companies.edit', compact('company'));
     }
 
@@ -99,6 +102,7 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company)
     {
         //
+        $this->authorize('update', $company);
         $request->validate([
             'name' => 'required|string|max:255',
             'ct_email' => 'nullable|email',
@@ -130,7 +134,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.companies.edit', $company->id)->with('success', 'Company updated successfully.');
+        return redirect()->route(auth()->user()->roles->first()->name.'.companies.edit', $company->id)->with('success', 'Company updated successfully.');
     }
 
     /**

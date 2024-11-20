@@ -13,8 +13,8 @@
                         <img class="shrink-0 w-[45px] h-[45px] rounded-full"
                              src="{{ asset('images/user/avatar-1.jpg') }}" alt="user-image"/>
                         <div class="ml-4 mr-2 grow">
-                            <h6 class="mb-0">{{ \Illuminate\Support\Facades\Auth::user()->name }}</h6>
-                            <small>{{ \Illuminate\Support\Facades\Auth::user()->roles->first()->name }}</small>
+                            <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                            <small>{{ Auth::user()->roles->first()->name }}</small>
                         </div>
                         <a class="shrink-0 btn btn-icon inline-flex btn-link-secondary" data-pc-toggle="collapse"
                            href="#pc_sidebar_userlink">
@@ -73,29 +73,24 @@
                     </svg>
                 </li>
                 <li class="pc-item pc-hasmenu">
-                    <a href="#!" class="pc-link">
-            <span class="pc-micon">
-              <svg class="pc-icon">
-                <use xlink:href="#custom-document"></use>
-              </svg>
-            </span>
+                    <a href="{{ route(auth()->user()->roles->first()->name.'.tickets.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                          <svg class="pc-icon">
+                            <use xlink:href="#custom-document"></use>
+                          </svg>
+                        </span>
                         <span class="pc-mtext">Tickets</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                     </a>
-                    <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="{{ route('admin.tickets.index') }}">Reported
-                                Tickets</a></li>
-                        <li class="pc-item"><a class="pc-link" href="{{ route('admin.tickets.index', ['status' => 0]) }}">Archived Tickets</a>
-                        </li>
-                    </ul>
                 </li>
+                @role('admin|manager')
                 <li class="pc-item pc-caption">
                     <label>Users</label>
                     <svg class="pc-icon">
                         <use xlink:href="#custom-layer"></use>
                     </svg>
                 </li>
-
+                @endrole
+                @role('admin')
                 <li class="pc-item pc-hasmenu">
                     <a href="{{ route('admin.admins.index') }}" class="pc-link">
                         <span class="pc-micon">
@@ -106,8 +101,10 @@
                         <span class="pc-mtext">Administrators</span>
                     </a>
                 </li>
+                @endrole
+                @hasanyrole('admin|manager')
                 <li class="pc-item pc-hasmenu">
-                    <a href="{{ route('admin.companies.index') }}" class="pc-link">
+                    <a href="{{ route(auth()->user()->roles->first()->name.'.companies.index') }}" class="pc-link">
                         <span class="pc-micon">
                           <svg class="pc-icon">
                             <use xlink:href="#custom-building"></use>
@@ -117,7 +114,7 @@
                     </a>
                 </li>
                 <li class="pc-item pc-hasmenu">
-                    <a href="{{ route('admin.managers.index') }}" class="pc-link">
+                    <a href="{{ route(auth()->user()->roles->first()->name.'.managers.index') }}" class="pc-link">
                         <span class="pc-micon">
                           <svg class="pc-icon">
                             <use xlink:href="#custom-user-square"></use>
@@ -127,15 +124,23 @@
                     </a>
                 </li>
                 <li class="pc-item pc-hasmenu">
-                    <a href="{{ route('admin.drivers.index') }}" class="pc-link">
+                    <a href="#!" class="pc-link">
                         <span class="pc-micon">
                           <svg class="pc-icon">
                             <use xlink:href="#custom-car-icon"></use>
                           </svg>
                         </span>
                         <span class="pc-mtext">Drivers</span>
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                     </a>
+                    <ul class="pc-submenu">
+                        <li class="pc-item"><a class="pc-link" href="{{ route(auth()->user()->roles->first()->name.'.drivers.index') }}">Registered Drivers</a></li>
+                        <li class="pc-item"><a class="pc-link" href="{{ route(auth()->user()->roles->first()->name.'.drivers.index', ['status' => 0]) }}">Ticket Drivers</a>
+                        </li>
+                    </ul>
                 </li>
+                @endhasanyrole
+                @role('admin')
                 <li class="pc-item pc-hasmenu">
                     <a href="{{ route('admin.attorneys.index') }}" class="pc-link">
                         <span class="pc-micon">
@@ -146,6 +151,7 @@
                         <span class="pc-mtext">Attorneys</span>
                     </a>
                 </li>
+
                 <li class="pc-item pc-caption">
                     <label>Citations</label>
                     <svg class="pc-icon">
@@ -188,6 +194,8 @@
                         <span class="pc-mtext">Logs</span>
                     </a>
                 </li>
+                @endrole
+
                 <li class="pc-item pc-caption">
                     <label>Support</label>
                     <svg class="pc-icon">

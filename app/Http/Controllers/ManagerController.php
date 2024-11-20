@@ -6,10 +6,16 @@ use App\Models\Manager;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 
 class ManagerController extends Controller
 {
+    public function dashboard()
+    {
+        return view('manager.dashboard');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -32,8 +38,10 @@ class ManagerController extends Controller
         //
         $currentUser = request()->user();
 
-        if (!$currentUser->hasAnyRole(['admin', 'company'])) {
-            abort(403);
+        if($currentUser->hasRole('manager')) {
+            if (!$currentUser->roleable->companiesCountWithWriteAccess()) {
+                abort(403);
+            }
         }
         return view('managers.create');
     }
@@ -68,6 +76,15 @@ class ManagerController extends Controller
             'notification_sms' => $request->has('notification_sms'),
             'notification_push' => $request->has('notification_push'),
         ]);
+
+        foreach ($request->get('managerCompany_id') as $index => $company_id) {
+            $currentUser = \auth()->user();
+            if ($currentUser->hasRole('manager') && !$currentUser->roleable->canWriteToCompany($company_id)) {
+                throw ValidationException::withMessages([
+                    "company_id" => "You do not have write access to company {$request->managerCompany_name[$index]}."
+                ]);
+            }
+        }
 
         $manager = Manager::create([]);
 
@@ -145,6 +162,14 @@ class ManagerController extends Controller
             'notification_sms' => $request->has('notification_sms'),
             'notification_push' => $request->has('notification_push'),
         ]);
+        foreach ($request->get('managerCompany_id') as $index => $company_id) {
+            $currentUser = \auth()->user();
+            if ($currentUser->hasRole('manager') && !$currentUser->roleable->canWriteToCompany($company_id)) {
+                throw ValidationException::withMessages([
+                    "company_id" => "You do not have write access to company {$request->managerCompany_name[$index]}."
+                ]);
+            }
+        }
         $manager->user()->update($request->only([
                 'name',
                 'email',
@@ -175,7 +200,7 @@ class ManagerController extends Controller
             }
         }
 
-        return redirect()->route(Auth::user()->roles->first()->name.'.managers.edit', $manager->id)->with('success', 'Manager created successfully.');
+        return redirect()->route(Auth::user()->roles->first()->name.'.managers.edit', $manager->id)->with('success', 'Manager updated successfully.');
     }
 
     /**

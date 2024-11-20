@@ -1,9 +1,8 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
+        <form action="{{ route('manager.tickets.store') }}" method="POST">
             @csrf
-            @method('PUT')
             <div class="card">
                 <div class="card-body !py-0">
                     <ul class="flex flex-wrap w-full font-medium text-center nav-tabs">
@@ -89,7 +88,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="col-span-12 md:col-span-3">
                                                 <label class="form-label">Driver</label>
-                                                <input type="text" class="form-control" name="name" id="name" value="{{ old('name', $ticket->name) }}"/>
+                                                <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}"/>
                                                 @if ($errors->has('name'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('name') }}</strong>
@@ -100,7 +99,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Driver Email</label>
-                                                <input type="email" name="user_email" class="form-control" id="driverEmail" value="{{ old('user_email', $ticket->user_email) }}" />
+                                                <input type="email" name="user_email" class="form-control" id="driverEmail" value="{{ old('user_email') }}" />
                                                 @if ($errors->has('user_email'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('user_email') }}</strong>
@@ -117,7 +116,7 @@
                                                     id="companies"
                                                 ></select>
                                                 @if ($errors->has('company_id'))
-                                                    <span class="invalid-feedback text-danger">
+                                                <span class="invalid-feedback text-danger">
                                                     <strong>{{ $errors->first('company_id') }}</strong>
                                                 </span>
                                                 @endif
@@ -126,7 +125,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="address">Address</label>
-                                                <input type="text" class="form-control" name="address" id="address" value="{{ old('address', $ticket->address) }}" />
+                                                <input type="text" class="form-control" name="address" id="address" value="{{ old('address') }}" />
                                                 @if ($errors->has('address'))
                                                     <span class="invalid-feedback text-danger">
                                                     <strong>{{ $errors->first('address') }}</strong>
@@ -137,7 +136,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="city">City</label>
-                                                <input type="text" class="form-control" name="city" id="city" value="{{ old('city', $ticket->city) }}"/>
+                                                <input type="text" class="form-control" name="city" id="city" value="{{ old('city') }}"/>
                                                 @if ($errors->has('city'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('city') }}</strong>
@@ -148,7 +147,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="state">State</label>
-                                                <input type="text" class="form-control" name="state" id="state" value="{{ old('state', $ticket->state) }}" />
+                                                <input type="text" class="form-control" name="state" id="state" value="{{ old('state') }}" />
                                                 @if ($errors->has('state'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('state') }}</strong>
@@ -159,7 +158,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="zip">Zipcode</label>
-                                                <input type="text" class="form-control" name="zip" id="zip" value="{{ old('zip', $ticket->zip) }}" />
+                                                <input type="text" class="form-control" name="zip" id="zip" value="{{ old('zip') }}" />
                                                 @if ($errors->has('zip'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('zip') }}</strong>
@@ -172,7 +171,7 @@
                                                 <label class="form-label">Date Received</label>
                                                 <div class="input-group date">
                                                     <input type="text" name="date_issued" class="form-control" placeholder="Select date"
-                                                           id="dateIssued" value="{{ \Carbon\Carbon::parse(old('date_issued', $ticket->date_issued))->toDateString() }}"/>
+                                                           id="dateIssued" value="{{ \Carbon\Carbon::parse(old('date_issued'))->toDateString() }}"/>
                                                     <span class="input-group-text">
                                                       <i class="feather icon-calendar"></i>
                                                     </span>
@@ -191,7 +190,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="receivedIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_RECEIVED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_RECEIVED }}"/>
+                                                                   id="receivedIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_RECEIVED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_RECEIVED }}"/>
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)] opacity-100"
                                                                 for="receivedIndicator">
@@ -208,7 +207,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="sentToAttorneyIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_SENT_TO_ATTORNEY ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_SENT_TO_ATTORNEY }}"/>
+                                                                   id="sentToAttorneyIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_SENT_TO_ATTORNEY ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_SENT_TO_ATTORNEY }}"/>
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)]"
                                                                 for="sentToAttorneyIndicator">
@@ -225,7 +224,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="cancelledIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_CANCELLED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_CANCELLED }}" />
+                                                                   id="cancelledIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_CANCELLED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_CANCELLED }}" />
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)]"
                                                                 for="cancelledIndicator">
@@ -242,7 +241,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="disposedIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_DISPOSED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_DISPOSED }}" />
+                                                                   id="disposedIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_DISPOSED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_DISPOSED }}" />
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)]"
                                                                 for="disposedIndicator">
@@ -259,7 +258,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="continuedIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_CONTINUED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_CONTINUED }}" />
+                                                                   id="continuedIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_CONTINUED ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_CONTINUED }}" />
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)]"
                                                                 for="continuedIndicator">
@@ -276,7 +275,7 @@
                                                     <div class="border card p-3">
                                                         <div class="form-check">
                                                             <input type="radio" name="indicator" class="form-check-input"
-                                                                   id="attorneyAssignedIndicator" {{ old('indicator', $ticket->indicator) === \App\Models\Ticket::INDICATOR_ASSIGNED_TO_ATTORNEY ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_ASSIGNED_TO_ATTORNEY }}" />
+                                                                   id="attorneyAssignedIndicator" {{ old('indicator') === \App\Models\Ticket::INDICATOR_ASSIGNED_TO_ATTORNEY ? 'checked' : '' }} value="{{ \App\Models\Ticket::INDICATOR_ASSIGNED_TO_ATTORNEY }}" />
                                                             <label
                                                                 class="inline-block ml-2 w-[calc(100%_-_30px)]"
                                                                 for="attorneyAssignedIndicator">
@@ -304,14 +303,8 @@
                                                             <p class="mb-1">Class Commercial</p>
                                                         </div>
                                                         <div class="form-check form-switch p-0">
-                                                            <input
-                                                                name="class_commercial"
-                                                                class="form-check-input h4 position-relative m-0"
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                value="Yes"
-                                                                {{ old('class_commercial', $ticket->class_commercial) === 'Yes'? 'checked' : '' }}
-                                                            />
+                                                            <input name="class_commercial" class="form-check-input h4 position-relative m-0" type="checkbox"
+                                                                   role="switch" value="Yes" {{ old('class_commercial') === 'Yes'? 'checked' : '' }}/>
                                                         </div>
                                                     </div>
                                                     @if ($errors->has('class_commercial'))
@@ -326,14 +319,8 @@
                                                             <p class="mb-1">Road Side Inspection</p>
                                                         </div>
                                                         <div class="form-check form-switch p-0">
-                                                            <input
-                                                                name="road_side_inspection"
-                                                                class="form-check-input h4 position-relative m-0"
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                value="Yes"
-                                                                {{ old('road_side_inspection', $ticket->road_side_inspection) === 'Yes'? 'checked' : '' }}
-                                                            />
+                                                            <input name="road_side_inspection" class="form-check-input h4 position-relative m-0" type="checkbox"
+                                                                   role="switch" value="Yes" {{ old('road_side_inspection') === 'Yes'? 'checked' : '' }} />
                                                         </div>
                                                     </div>
                                                     @if ($errors->has('road_side_inspection'))
@@ -347,7 +334,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Vehicle License Number</label>
-                                                <input type="text" class="form-control" name="vehicle_lic_no" value="{{ old('vehicle_lic_no', $ticket->vehicle_lic_no) }}" />
+                                                <input type="text" class="form-control" name="vehicle_lic_no" value="{{ old('vehicle_lic_no') }}" />
                                                 @if ($errors->has('vehicle_lic_no'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('vehicle_lic_no') }}</strong>
@@ -360,7 +347,7 @@
                                                 <label class="form-label">Violation</label>
                                                 <select  class="form-control" name="violation_id">
                                                     @foreach(\App\Models\Violation::all() as $violation)
-                                                        <option value="{{ $violation->id }}" {{ old('violation_id', $ticket->violation_id) === $violation->id ? 'selected' : '' }}>{{ $violation->violation }}</option>
+                                                        <option value="{{ $violation->id }}" {{ old('violation_id') === $violation->id ? 'selected' : '' }}>{{ $violation->violation }}</option>
                                                     @endforeach
                                                 </select>
                                                 @if ($errors->has('violation_id'))
@@ -373,7 +360,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Citation Number</label>
-                                                <input type="text" class="form-control" name="citation_no" value="{{ old('citation_no', $ticket->citation_no) }}" />
+                                                <input type="text" class="form-control" name="citation_no" value="{{ old('citation_no') }}" />
                                                 @if ($errors->has('citation_no'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('citation_no') }}</strong>
@@ -384,7 +371,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Ticket type</label>
-                                                <input type="text" class="form-control" name="ticket_type" value="{{ old('ticket_type', $ticket->ticket_type) }}" />
+                                                <input type="text" class="form-control" name="ticket_type" value="{{ old('ticket_type') }}" />
                                                 @if ($errors->has('ticket_type'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('ticket_type') }}</strong>
@@ -410,7 +397,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Court</label>
-                                                <input type="text" class="form-control" name="court_name" value="{{ old('court_name', $ticket->court_name) }}" />
+                                                <input type="text" class="form-control" name="court_name" value="{{ old('court_name') }}" />
                                                 @if ($errors->has('court_name'))
                                                     <span class="invalid-feedback text-danger">
                                                         <strong>{{ $errors->first('court_name') }}</strong>
@@ -423,20 +410,15 @@
                                                 <label class="form-label">Court Date</label>
                                                 <div class="input-group date">
                                                     <input type="text" class="form-control" placeholder="Select date"
-                                                           id="courtTabDate" name="court_date" value="{{ old('court_date', $ticket->court_address) ? \Carbon\Carbon::parse(old('court_date', $ticket->court_date))->toDateString() : ''}}"/>
+                                                           id="courtTabDate" name="court_date" value="{{ old('court_date') ? \Carbon\Carbon::parse(old('court_date'))->toDateString() : ''}}"/>
                                                 </div>
-                                                @if ($errors->has('court_date'))
-                                                    <span class="invalid-feedback text-danger">
-                                                        <strong>{{ $errors->first('court_date') }}</strong>
-                                                    </span>
-                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Court Address</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" name="court_address" id="courtAddress" value="{{ old('court_address', $ticket->court_address) }}" />
+                                                    <input type="text" class="form-control" name="court_address" id="courtAddress" value="{{ old('court_address') }}" />
                                                     <button class="btn btn-outline-secondary" type="button" onclick="showAddressOnMap()">
                                                         Get Location <span class="ti ti-map-pin"></span>
                                                     </button>
@@ -506,7 +488,7 @@
                                             <div class="border card p-3">
                                                 <div class="form-check">
                                                     <input type="radio" name="attorney_response" class="form-check-input"
-                                                           id="acceptedAttorneyResponse" {{ old('attorney_response', $ticket->attorney_response) === \App\Models\Ticket::ATTORENY_RESPONSE_ACCEPTED ? 'checked' : '' }} value="{{ \App\Models\Ticket::ATTORENY_RESPONSE_ACCEPTED }}"/>
+                                                           id="acceptedAttorneyResponse" {{ old('attorney_response') === \App\Models\Ticket::ATTORENY_RESPONSE_ACCEPTED ? 'checked' : '' }} value="{{ \App\Models\Ticket::ATTORENY_RESPONSE_ACCEPTED }}"/>
                                                     <label
                                                         class="inline-block ml-2 w-[calc(100%_-_30px)] opacity-100"
                                                         for="acceptedAttorneyResponse">
@@ -523,7 +505,7 @@
                                             <div class="border card p-3">
                                                 <div class="form-check">
                                                     <input type="radio" name="attorney_response" class="form-check-input"
-                                                           id="rejectedAttorneyResponse" {{ old('attorney_response', $ticket->attorney_response) === \App\Models\Ticket::ATTORENY_RESPONSE_REJECTED ? 'checked' : '' }} value="{{ \App\Models\Ticket::ATTORENY_RESPONSE_REJECTED }}"/>
+                                                           id="rejectedAttorneyResponse" {{ old('attorney_response') === \App\Models\Ticket::ATTORENY_RESPONSE_REJECTED ? 'checked' : '' }} value="{{ \App\Models\Ticket::ATTORENY_RESPONSE_REJECTED }}"/>
                                                     <label
                                                         class="inline-block ml-2 w-[calc(100%_-_30px)] opacity-100"
                                                         for="rejectedAttorneyResponse">
@@ -548,45 +530,15 @@
                             <h5>Documents</h5>
                         </div>
                         <div class="card-body">
-                            <div id="dZUpload" class="dropzone">
-                                <div class="dz-default dz-message">
-                                    <svg class="pc-icon block mb-2 mx-auto w-[calc(100%_-_120px)]"> <use xlink:href="#custom-document-upload"></use> </svg>
-                                    <span>Drag and drop files here or click to upload</span>
+                            <div class="grid grid-cols-12 gap-6">
+                                <div class="col-span-12 md:col-span-12">
+                                    <div class="mb-3 flex flex-col items-center bg-yellow-100 p-4">
+                                        <!-- SVG Icon -->
+                                        <span class="ti ti-alert-triangle text-warning block text-[50px]"></span>
+                                        <!-- Warning Message -->
+                                        <span class="font-bold">Please create a ticket before adding documents.</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card-body table-card">
-                            <div class="table-responsive">
-                                <table class="table mb-0" id="attachmentsTable">
-                                    <thead>
-                                    <tr>
-                                        <th>Document</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($ticket->attachments as $attachment)
-                                        <tr>
-                                            <td>
-                                                <div class="flex items-center">
-                                                    <h5 class="mb-0">{{ $attachment->filename }}</h5>
-                                                </div>
-                                            </td>
-                                            <td class="text-right">
-                                                <a href="{{ asset($attachment->path) }}"
-                                                   class="filePreviewBtn w-9 h-9 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                                    <i class="ti ti-eye text-warning text-lg leading-none"></i>
-                                                </a>
-                                                <a href="{{ asset($attachment->path) }}"
-                                                   class="w-9 h-9 rounded-xl inline-flex items-center justify-center btn-link-secondary"
-                                                   download>
-                                                    <i class="ti ti-download text-primary text-lg leading-none"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
@@ -601,34 +553,14 @@
                                 <div class="card-body">
                                     <div class="grid grid-cols-12 gap-6">
                                         <div class="col-span-12 md:col-span-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Note</label>
-                                                <div class="flex items-center flex-col">
-                                                    <div class="grow mx-3 w-full">
-                                                        <textarea class="form-control" id="newTicketNote" name="note"></textarea>
-                                                    </div>
-                                                    <div class="shrink-0 mt-3">
-                                                        <button type="button" class="btn btn-primary" id="addNoteBtn">Add Note</button>
-                                                    </div>
-                                                </div>
+                                            <div class="mb-3 flex flex-col items-center bg-yellow-100 p-4">
+                                                <!-- SVG Icon -->
+                                                <span class="ti ti-alert-triangle text-warning block text-[50px]"></span>
+                                                <!-- Warning Message -->
+                                                <span class="font-bold">Please create a ticket before adding notes.</span>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="grid grid-cols-12 gap-6" id="notesList">
-                                        @foreach($ticket->notes as $note)
-                                            <div class="col-span-12 md:col-span-6">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h6 class="mb-4">{{ $note->note }}</h6>
-                                                        <span class="text-muted text-sm float-end"> {{ $note->user->name }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -644,7 +576,7 @@
                                 <div class="col-span-12 sm:col-span-6">
                                     <div class="mb-3">
                                         <label class="form-label">Processor Name</label>
-                                        <input type="text" class="form-control" name="processor_name" value="{{ old('processor_name', $ticket->processor_name) }}" />
+                                        <input type="text" class="form-control" name="processor_name" value="{{ old('processor_name') }}" />
                                         @if ($errors->has('processor_name'))
                                             <span class="invalid-feedback text-danger">
                                                 <strong>{{ $errors->first('processor_name') }}</strong>
@@ -655,7 +587,7 @@
                                 <div class="col-span-12 sm:col-span-6">
                                     <div class="mb-3">
                                         <label class="form-label">Processor Email</label>
-                                        <input type="email" class="form-control" name="processor_email" value="{{ old('processor_email', $ticket->processor_email) }}" />
+                                        <input type="email" class="form-control" name="processor_email" value="{{ old('processor_email') }}" />
                                         @if ($errors->has('processor_email'))
                                             <span class="invalid-feedback text-danger">
                                                 <strong>{{ $errors->first('processor_email') }}</strong>
@@ -666,7 +598,7 @@
                                 <div class="col-span-12 sm:col-span-6">
                                     <div class="mb-3">
                                         <label class="form-label">Processor Phone</label>
-                                        <input type="text" class="form-control" name="processor_ph_number" value="{{ old('processor_ph_number', $ticket->processor_ph_number) }}" />
+                                        <input type="text" class="form-control" name="processor_ph_number" value="{{ old('processor_ph_number') }}" />
                                         @if ($errors->has('processor_ph_number'))
                                             <span class="invalid-feedback text-danger">
                                                 <strong>{{ $errors->first('processor_ph_number') }}</strong>
@@ -677,7 +609,7 @@
                                 <div class="col-span-12 sm:col-span-6">
                                     <div class="mb-3">
                                         <label class="form-label">Processor Notes To Attorney</label>
-                                        <textarea class="form-control" rows="2" name="processor_notes_to_attorney">{{ old('processor_notes_to_attorney', $ticket->processor_notes_to_attorney) }}</textarea>
+                                        <textarea class="form-control" rows="2" name="note">{{ old('processor_notes_to_attorney') }}</textarea>
                                         @if ($errors->has('processor_notes_to_attorney'))
                                             <span class="invalid-feedback text-danger">
                                                 <strong>{{ $errors->first('processor_notes_to_attorney') }}</strong>
@@ -691,7 +623,7 @@
                 </div>
                 <div class="col-span-12 text-right">
                     <button type="reset" class="btn btn-outline-secondary mx-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1">Update Ticket</button>
+                    <button type="submit" class="btn btn-primary mx-1">Create Ticket</button>
                 </div>
             </div>
         </form>
@@ -702,61 +634,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
     <script src="{{ asset('js/plugins/flatpickr.min.js') }}"></script>
     <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/dropzone-amd-module.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/viewerjs@1.10.1/dist/viewer.min.js"></script>
     <script>
-        Dropzone.autoDiscover = false;
-        let myDropzone = new Dropzone("div#dZUpload", {
-            url: "{{ route('api.tickets-attach.store', $ticket->id) }}",
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            }
-        });
-        // Add an error event handler
-        myDropzone.on("error", function(file, response) {
-            // Check if response has a message property and display it
-            let errorMessage = response.message ? response.message : "An error occurred during the upload.";
-
-            // Optionally, you could append the error to the file preview in Dropzone
-            let errorDisplay = file.previewElement.querySelector("[data-dz-errormessage]");
-            if (errorDisplay) {
-                errorDisplay.textContent = errorMessage;
-            }
-
-            Toast.fire({
-                icon: 'error',
-                title: errorMessage
-            });
-        });
-
-        myDropzone.on("success", file => {
-            let attachmentResponse = JSON.parse(file.xhr.response);
-            // Create a new table row for the uploaded file
-            const newRow = `
-                <tr>
-                    <td>
-                        <div class="flex items-center">
-                            <h5 class="mb-0">${file.name}</h5>
-                        </div>
-                    </td>
-                    <td class="text-right">
-                        <a href="${attachmentResponse.path}" class="filePreviewBtn w-9 h-9 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                            <i class="ti ti-eye text-warning text-lg leading-none"></i>
-                        </a>
-                        <a href="${attachmentResponse.path}" class="w-9 h-9 rounded-xl inline-flex items-center justify-center btn-link-secondary" download>
-                            <i class="ti ti-download text-primary text-lg leading-none"></i>
-                        </a>
-                    </td>
-                </tr>
-            `;
-            document.querySelector('#attachmentsTable tbody').insertAdjacentHTML('beforeend', newRow);
-
-            Toast.fire({
-                icon: 'success',
-                title: 'Document attached successfully'
-            });
-        });
-
         const map = new ol.Map({
             target: 'courtMap',
             layers: [
@@ -809,7 +687,6 @@
         flatpickr(document.querySelector('#courtTabDate'));
         flatpickr(document.querySelector('#dateIssued'));
 
-        // Initialize Choices without any choices initially
         let attorneys = document.querySelector('#attorneys');
         var attorneysChoices = new Choices('#attorneys', {
             placeholder: true,
@@ -826,19 +703,19 @@
                         value: '',
                         label: 'Select an option',
                         disabled: true,
-                        selected: {{ !old('attorney_id', $ticket->attorney_id) ? 'true' : 'false' }} },
+                        selected: {{ !old('attorney_id') ? 'true' : 'false' }} },
                         ...data.map(function (attorney) {
-                            return {
-                                value: attorney.roleable.id,
-                                label: attorney.name,
-                                selected: '{{ old('attorney_id', $ticket->attorney_id) }}' === attorney.id,
-                                customProperties: {
-                                    officeHours: (attorney.roleable.office_hours_start ?? '') + ' - ' + (attorney.roleable.office_hours_start ?? ''),
-                                    attorneyPhone: (attorney.phone ?? ''),
-                                    attorneyAddress: (attorney.address ?? ''),
-                                },
-                            };
-                        })]
+                        return {
+                            value: attorney.roleable.id,
+                            label: attorney.name,
+                            selected: Number('{{ old('attorney_id') }}') === Number(attorney.id),
+                            customProperties: {
+                                officeHours: (attorney.roleable.office_hours_start ?? '') + ' - ' + (attorney.roleable.office_hours_start ?? ''),
+                                attorneyPhone: (attorney.phone ?? ''),
+                                attorneyAddress: (attorney.address ?? ''),
+                            },
+                        };
+                    })];
                 });
         });
         attorneys.addEventListener('choice', function(event) {
@@ -862,71 +739,26 @@
                         value: '',
                         label: 'Select an option',
                         disabled: true,
-                        selected: {{ !old('company_id', $ticket->company_id) ? 'true' : 'false' }} },
+                        selected: {{ !old('company_id') ? 'true' : 'false' }} },
                         ...data.map(function (company) {
                         return {
                             value: company.id,
                             label: company.name,
-                            selected: Number({{ old('company_id', $ticket->company_id) }}) === Number(company.id)
+                            selected: Number({{ old('company_id') }}) === Number(company.id)
                         };
                     })];
                 });
         });
 
-        document.addEventListener('click', function (e) {
-            let addNoteBtn = e.target.closest('#addNoteBtn');
-            if (addNoteBtn) {
-                // Create a new XMLHttpRequest object
-                const xhr = new XMLHttpRequest();
 
-                const url = "{{ route('api.tickets-note.store', $ticket->id) }}";
-
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-                xhr.setRequestHeader("Content-Type", "application/json");
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 201) {
-                            // Request succeeded, handle response here
-                            let data = JSON.parse(xhr.responseText);
-                            document.getElementById('notesList').innerHTML += ('<div class="col-span-12 md:col-span-6">'+
-                                '<div class="card">'+
-                                '<div class="card-body">'+
-                                '<h6 class="mb-4">'+data.note+'</h6>'+
-                                '<span class="text-muted text-sm float-end"> {{ Auth::user()->name }}</span>'+
-                                '</div>'+
-                                '</div>'+
-                                '</div>')
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Note added successfully'
-                            });
-                        } else {
-                            Toast.fire({
-                                icon: 'error',
-                                title: 'Something went wrong!'
-                            });
-                        }
-                    }
-                };
-
-                const data = JSON.stringify({
-                    note: document.getElementById('newTicketNote').value,
-                });
-
-                xhr.send(data);
-                document.getElementById('newTicketNote').value = '';
-            }
-        })
 
     </script>
 @endsection
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.2.1/ol.css">
     <link rel="stylesheet" href="{{ asset('css/plugins/flatpickr.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/plugins/dropzone.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/plugins/choices.min.css') }}" />
+
     <style>
         .marker {
             width: 24px;

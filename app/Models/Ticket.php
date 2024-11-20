@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
 
 class Ticket extends Model
@@ -60,6 +62,17 @@ class Ticket extends Model
     public function company() {
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }
+    public function driver(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Driver::class,  // Final model
+            User::class,    // Intermediary model
+            'email',        // Foreign key on the User table (matches Ticket.user_email)
+            'id',           // Foreign key on the Driver table (matches User.userable_id)
+            'user_email',   // Local key on the Ticket table
+            'roleable_id'   // Local key on the User table (Driver's morphable ID)
+        )->where('users.roleable_type', Driver::class); // Ensure morph type matches Driver
+    }
 
     public function isDverDataq() {
         $dver = false;
@@ -81,7 +94,7 @@ class Ticket extends Model
     }
 
     public function attorney() {
-        return $this->belongsTo(Attorney::class, 'lawyer_id', 'id');
+        return $this->belongsTo(Attorney::class, 'attorney_id', 'id');
     }
 
     public function violation()
@@ -91,5 +104,26 @@ class Ticket extends Model
 
     public function scopeFilter($query, $filters) {
         return $filters->apply($query);
+    }
+
+    public function scopeFilterByRole(Builder $query, $currentUser)
+    {
+        if ($currentUser->hasRole('admin')) {
+            // Admin: No filtering needed
+            return $query;
+        }  elseif ($currentUser->hasRole('manager')) {
+            // Manager: Filter by associated companies
+            return $query->whereHas('company', function ($q) use ($currentUser) {
+                $q->whereIn('id', $currentUser->roleable->companies->pluck('id')->toArray());
+            });
+        } elseif ($currentUser->hasRole('attorney')) {
+            return $query->where('attorney_id', $currentUser->roleable->id);
+        } elseif ($currentUser->hasRole('driver')) {
+            $query->whereHas('driver', function ($q) use ($currentUser){
+                $q->whereHas('user', function($userQuery) use ($currentUser) {
+                    $userQuery->where('email', $currentUser->email);
+                });
+            });
+        }
     }
 }

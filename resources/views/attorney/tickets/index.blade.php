@@ -15,27 +15,11 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="grid grid-cols-12 gap-6">
-                                        <div class="col-span-12 md:col-span-3">
+                                        <div class="col-span-12 md:col-span-4">
                                             <label class="form-label">Driver</label>
                                             <input type="text" class="form-control" name="name" value="{{ Request::get('name') }}" placeholder="Driver name">
                                         </div>
-                                        <div class="col-span-12 md:col-span-3">
-                                            <label class="form-label">Company</label>
-                                            <select
-                                                class="form-control"
-                                                name="company_id"
-                                                id="companies"
-                                            ></select>
-                                        </div>
-                                        <div class="col-span-12 md:col-span-3">
-                                            <label class="form-label">Attorney</label>
-                                            <select
-                                                class="form-control"
-                                                name="attorney_id"
-                                                id="attorneys"
-                                            ></select>
-                                        </div>
-                                        <div class="col-span-12 md:col-span-3">
+                                        <div class="col-span-12 md:col-span-4">
                                             <label class="form-label">Court Date</label>
                                             <div class="input-group date">
                                                 <input type="text" id="courtDate" name="court_date" placeholder="Select date range"  name="date_issued" class="form-control" />
@@ -44,7 +28,7 @@
                                                     </span>
                                             </div>
                                         </div>
-                                        <div class="col-span-12 md:col-span-3">
+                                        <div class="col-span-12 md:col-span-4">
                                             <label class="form-label">Ticket Status</label>
                                             <select
                                                 class="form-control"
@@ -74,9 +58,6 @@
             <div class="card-header">
                 <div class="sm:flex items-center justify-between">
                     <h5 class="mb-3 sm:mb-0">Tickets list</h5>
-                    <div>
-                        <a href="{{ route('admin.tickets.create') }}" class="btn btn-primary">Create Ticket</a>
-                    </div>
                 </div>
             </div>
             <div class="card-body !pt-3">
@@ -121,14 +102,8 @@
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($ticket->updated_at)->diffForHumans() }}</td>
                                 <td>
-                                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                    <a href="{{ route('attorney.tickets.show', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
                                         <i class="ti ti-eye text-xl leading-none"></i>
-                                    </a>
-                                    <a href="{{ route('admin.tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                        <i class="ti ti-edit text-xl leading-none"></i>
-                                    </a>
-                                    <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                        <i class="ti ti-trash text-xl leading-none"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -163,8 +138,6 @@
 
 @section('post-scripts')
     <script src="{{ asset('js/plugins/flatpickr.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
-
     <script>
         // minimum setup
         flatpickr(document.querySelector('#courtDate'), {
@@ -172,62 +145,6 @@
             @if (Request::get('court_date'))
             defaultDate: [new Date('{{ explode(' to ',  Request::get('court_date'))[0] }}'), new Date('{{ explode(' to ',  Request::get('court_date'))[1] }}')]
             @endif
-        });
-
-        var companiesChoices = new Choices('#companies', {
-            placeholder: true,
-            placeholderValue: 'Company Name',
-            maxItemCount: 5,
-            shouldSort: false, // Optional: keeps the order of items as provided
-        }).setChoices(function () {
-            return fetch('{{ route('api.company.index') }}')
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    return [{
-                        value: '',
-                        label: 'Select an option',
-                        disabled: true,
-                        selected: {{ !Request::has('company_id') ? 'true' : 'false' }} },
-                        ...data.map(function (company) {
-                        return {
-                            value: company.id,
-                            label: company.name,
-                            selected: Number('{{ Request::get('company_id') }}') === Number(company.id)
-                        };
-                    })];
-                });
-        });
-
-        var attorneysChoices = new Choices('#attorneys', {
-            placeholder: true,
-            placeholderValue: 'Attorney Name',
-            maxItemCount: 5,
-            shouldSort: false, // Optional: keeps the order of items as provided
-        }).setChoices(function () {
-            return fetch('{{ route('api.attorney.index') }}', {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },credentials: 'include'
-            }).then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    return [{
-                        value: '',
-                        label: 'Select an option',
-                        disabled: true,
-                        selected: {{ !Request::has('attorney_id') ? 'true' : 'false' }} },
-                        ...data.map(function (attorney) {
-                        return {
-                            value: attorney.roleable.id,
-                            label: attorney.name,
-                            selected: Number('{{ Request::get('attorney_id') }}') === Number(attorney.roleable.id)
-                        };
-                    })];
-                });
         });
     </script>
 @endsection

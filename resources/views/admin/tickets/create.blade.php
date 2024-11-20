@@ -691,26 +691,31 @@
         var attorneysChoices = new Choices('#attorneys', {
             placeholder: true,
             placeholderValue: 'Attorney Name',
-            maxItemCount: 5
+            maxItemCount: 5,
+            shouldSort: false, // Optional: keeps the order of items as provided
         }).setChoices(function () {
             return fetch('{{ route('api.attorney.index') }}')
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    return data.map(function (attorney) {
-                        console.log(attorney);
+                    return [{
+                        value: '',
+                        label: 'Select an option',
+                        disabled: true,
+                        selected: {{ !old('attorney_id') ? 'true' : 'false' }} },
+                        ...data.map(function (attorney) {
                         return {
                             value: attorney.roleable.id,
                             label: attorney.name,
-                            selected: '{{ old('attorney_id') }}' === attorney.id,
+                            selected: Number('{{ old('attorney_id') }}') === Number(attorney.id),
                             customProperties: {
                                 officeHours: (attorney.roleable.office_hours_start ?? '') + ' - ' + (attorney.roleable.office_hours_start ?? ''),
                                 attorneyPhone: (attorney.phone ?? ''),
                                 attorneyAddress: (attorney.address ?? ''),
                             },
                         };
-                    });
+                    })];
                 });
         });
         attorneys.addEventListener('choice', function(event) {
@@ -722,20 +727,26 @@
         var companiesChoices = new Choices('#companies', {
             placeholder: true,
             placeholderValue: 'Company Name',
-            maxItemCount: 5
+            maxItemCount: 5,
+            shouldSort: false, // Optional: keeps the order of items as provided
         }).setChoices(function () {
             return fetch('{{ route('api.company.index') }}')
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    return data.map(function (company) {
+                    return [{
+                        value: '',
+                        label: 'Select an option',
+                        disabled: true,
+                        selected: {{ !old('company_id') ? 'true' : 'false' }} },
+                        ...data.map(function (company) {
                         return {
                             value: company.id,
                             label: company.name,
-                            selected: {{ old('company_id') }} === company.id
+                            selected: Number('{{ old('company_id') }}') === Number(company.id)
                         };
-                    });
+                    })]
                 });
         });
 

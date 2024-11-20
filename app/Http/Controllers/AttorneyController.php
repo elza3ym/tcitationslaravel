@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class AttorneyController extends Controller
 {
+    public function dashboard()
+    {
+        return view('attorney.dashboard');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -77,7 +82,7 @@ class AttorneyController extends Controller
             'notification_push',
         ]));
         $user->assignRole('attorney');
-        return redirect()->route('admin.attorneys.edit', $attorney->id)->with('success', 'Attorney created successfully.');
+        return redirect()->route(auth()->user()->roles->first()->name.'.attorneys.edit', $attorney->id)->with('success', 'Attorney created successfully.');
     }
 
     /**
@@ -144,7 +149,7 @@ class AttorneyController extends Controller
             'office_hours_end'
         ]));
 
-        return redirect()->route('admin.attorneys.edit', $attorney->id)->with('success', 'Attorney updated successfully.');
+        return redirect()->route(auth()->user()->roles->first()->name.'.attorneys.edit', $attorney->id)->with('success', 'Attorney updated successfully.');
     }
 
     /**

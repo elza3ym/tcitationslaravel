@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route('admin.companies.store') }}" method="POST">
+        <form action="{{ route(auth()->user()->roles->first()->name.'.companies.store') }}" method="POST">
             @csrf
             <div class="card">
                 <div class="card-body !py-0">

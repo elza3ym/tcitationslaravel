@@ -74,9 +74,11 @@
             <div class="card-header">
                 <div class="sm:flex items-center justify-between">
                     <h5 class="mb-3 sm:mb-0">Tickets list</h5>
+                    @if(auth()->user()->roleable->companiesCountWithWriteAccess())
                     <div>
-                        <a href="{{ route('admin.tickets.create') }}" class="btn btn-primary">Create Ticket</a>
+                        <a href="{{ route('manager.tickets.create') }}" class="btn btn-primary">Create Ticket</a>
                     </div>
+                    @endif
                 </div>
             </div>
             <div class="card-body !pt-3">
@@ -121,15 +123,17 @@
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($ticket->updated_at)->diffForHumans() }}</td>
                                 <td>
-                                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                    <a href="{{ route('manager.tickets.show', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
                                         <i class="ti ti-eye text-xl leading-none"></i>
                                     </a>
-                                    <a href="{{ route('admin.tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                    @if(auth()->user()->roleable->canWriteToCompany($ticket->company_id))
+                                    <a href="{{ route('manager.tickets.edit', $ticket->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
                                         <i class="ti ti-edit text-xl leading-none"></i>
                                     </a>
                                     <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
                                         <i class="ti ti-trash text-xl leading-none"></i>
                                     </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -179,7 +183,8 @@
             placeholderValue: 'Company Name',
             maxItemCount: 5,
             shouldSort: false, // Optional: keeps the order of items as provided
-        }).setChoices(function () {
+        });
+        companiesChoices.setChoices(function () {
             return fetch('{{ route('api.company.index') }}')
                 .then(function (response) {
                     return response.json();
@@ -190,16 +195,19 @@
                         label: 'Select an option',
                         disabled: true,
                         selected: {{ !Request::has('company_id') ? 'true' : 'false' }} },
-                        ...data.map(function (company) {
+                    ...data.map(function (company) {
                         return {
                             value: company.id,
                             label: company.name,
                             selected: Number('{{ Request::get('company_id') }}') === Number(company.id)
                         };
                     })];
-                });
-        });
-
+                })
+        },     'value', 'label', false);
+        @if (!Request::has('company_id'))
+        companiesChoices.clearStore();
+        companiesChoices.setChoiceByValue('');
+        @endif
         var attorneysChoices = new Choices('#attorneys', {
             placeholder: true,
             placeholderValue: 'Attorney Name',
@@ -219,12 +227,12 @@
                         value: '',
                         label: 'Select an option',
                         disabled: true,
-                        selected: {{ !Request::has('attorney_id') ? 'true' : 'false' }} },
-                        ...data.map(function (attorney) {
+                        selected: {{ !Request::has('company_id') ? 'true' : 'false' }} },
+                        ... data.map(function (attorney) {
                         return {
                             value: attorney.roleable.id,
                             label: attorney.name,
-                            selected: Number('{{ Request::get('attorney_id') }}') === Number(attorney.roleable.id)
+                            selected: '{{ Request::get('attorney') }}' === attorney.roleable.id
                         };
                     })];
                 });

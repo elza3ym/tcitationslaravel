@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route('admin.companies.update', $company->id) }}" method="POST">
+        <form action="{{ route(auth()->user()->roles->first()->name.'.companies.update', $company->id) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="card">

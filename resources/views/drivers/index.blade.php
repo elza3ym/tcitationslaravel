@@ -5,20 +5,21 @@
             <div class="card table-card">
                 <div class="card-header">
                     <div class="sm:flex items-center justify-between">
-                        <h5 class="mb-3 sm:mb-0">Managers list</h5>
+                        <h5 class="mb-3 sm:mb-0">Drivers list</h5>
+                        @if (!(request()->has('status') && request()->get('status') == 0))
+                        @role('admin')
+                        <div>
+                            <a href="{{ route(auth()->user()->roles->first()->name.'.drivers.create') }}" class="btn btn-primary">Create Driver</a>
+                        </div>
+                        @endrole
                         @role('manager')
                         @if(auth()->user()->roleable->companiesCountWithWriteAccess())
                         <div>
-                            <a href="{{ route(Auth::user()->roles->first()->name.'.managers.create') }}" class="btn btn-primary">Create Manager</a>
+                            <a href="{{ route(auth()->user()->roles->first()->name.'.drivers.create') }}" class="btn btn-primary">Create Driver</a>
                         </div>
                         @endif
                         @endrole
-                        @role('admin')
-                        <div>
-                            <a href="{{ route(Auth::user()->roles->first()->name.'.managers.create') }}" class="btn btn-primary">Create Manager</a>
-                        </div>
-                        @endrole
-
+                        @endif
                     </div>
                 </div>
                 <div class="card-body !pt-3">
@@ -30,6 +31,7 @@
                                 <th>Name</th>
                                 <th>State</th>
                                 <th>City</th>
+                                <th>Company</th>
                                 <th>Last access</th>
                                 <th>Action</th>
                             </tr>
@@ -49,26 +51,33 @@
                                     </td>
                                     <td>{{ $user->state }}</td>
                                     <td>{{ $user->city }}</td>
+                                    <td>{{ $user->roleable->company?->name ?? $user->company?->name }}</td>
                                     <td>{{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() : 'Never' }}</td>
                                     <td>
-                                        @role('admin')
-                                        <a href="{{ route(Auth::user()->roles->first()->name.".managers.edit", $user->roleable->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-edit text-xl leading-none"></i>
-                                        </a>
-                                        <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-trash text-xl leading-none"></i>
-                                        </a>
-                                        @endrole
-                                        @role('manager')
-                                        @if(auth()->user()->roleable->canWriteToOtherManagerCompany($user->roleable))
-                                        <a href="{{ route(auth()->user()->roles->first()->name.".managers.edit", $user->roleable->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-edit text-xl leading-none"></i>
-                                        </a>
-                                        <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-trash text-xl leading-none"></i>
-                                        </a>
+                                        @if ($user->roleable)
+                                            @role('admin')
+                                            <a href="{{ route(auth()->user()->roles->first()->name.'.drivers.edit', $user->roleable->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                <i class="ti ti-edit text-xl leading-none"></i>
+                                            </a>
+                                            <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                <i class="ti ti-trash text-xl leading-none"></i>
+                                            </a>
+                                            @endrole
+                                            @role('manager')
+                                            @if(auth()->user()->roleable->canWriteToCompany($user->roleable->company_id))
+                                            <a href="{{ route(auth()->user()->roles->first()->name.'.drivers.edit', $user->roleable->id) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                <i class="ti ti-edit text-xl leading-none"></i>
+                                            </a>
+                                            <a href="#" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
+                                                <i class="ti ti-trash text-xl leading-none"></i>
+                                            </a>
+                                            @endif
+                                            @endrole
+                                        @else
+                                            <a href="{{ route(auth()->user()->roles->first()->name.'.drivers.create', ['ticket_id' => $user->ticket_id]) }}" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-success" title="Register this driver">
+                                                <i class="ti ti-user-plus text-xl leading-none"></i>
+                                            </a>
                                         @endif
-                                        @endrole
                                     </td>
                                 </tr>
                             @endforeach
@@ -98,4 +107,4 @@
                 </div>
             </div>
         </div>
-@endsection
+        @endsection

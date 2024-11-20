@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
+        <form action="{{ route('manager.tickets.update', $ticket->id) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="card">
@@ -864,15 +864,14 @@
                         disabled: true,
                         selected: {{ !old('company_id', $ticket->company_id) ? 'true' : 'false' }} },
                         ...data.map(function (company) {
-                        return {
-                            value: company.id,
-                            label: company.name,
-                            selected: Number({{ old('company_id', $ticket->company_id) }}) === Number(company.id)
-                        };
-                    })];
+                            return {
+                                value: company.id,
+                                label: company.name,
+                                selected: Number({{ old('company_id', $ticket->company_id) }}) === Number(company.id)
+                            };
+                        })];
                 });
         });
-
         document.addEventListener('click', function (e) {
             let addNoteBtn = e.target.closest('#addNoteBtn');
             if (addNoteBtn) {

@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
             // Return the name of the policy class for the given model...
             if ($modelClass === \App\Models\Ticket::class) {
                 return \App\Policies\TicketPolicy::class;
+            } elseif ($modelClass === \App\Models\Company::class) {
+                return \App\Policies\CompanyPolicy::class;
+            } elseif ($modelClass === \App\Models\Driver::class) {
+                return \App\Policies\DriverPolicy::class;
             }
         });
 

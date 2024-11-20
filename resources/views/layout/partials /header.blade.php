@@ -177,8 +177,8 @@
                                         <img src="{{ asset('images/user/avatar-2.jpg') }}" alt="user-image" class="w-10 rounded-full" />
                                     </div>
                                     <div class="grow ms-3">
-                                        <h6 class="mb-1"> {{ \Illuminate\Support\Facades\Auth::user()->name }}🖖</h6>
-                                        <span>{{ \Illuminate\Support\Facades\Auth::user()->email }}</span>
+                                        <h6 class="mb-1"> {{ Auth::user()->name }}🖖</h6>
+                                        <span>{{ Auth::user()->email }}</span>
                                     </div>
                                 </div>
                                 <hr class="border-secondary-500/10 my-4" />

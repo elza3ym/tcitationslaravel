@@ -7,7 +7,7 @@ use App\Models\Ticket;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
-class DriverTicketController extends Controller
+class AttorneyTicketController extends Controller
 {
     use AuthorizesRequests;
     /**
@@ -16,9 +16,9 @@ class DriverTicketController extends Controller
     public function index(TicketFilters $filters)
     {
         //
-        $tickets = Ticket::whereHas('driver')->filterByRole(request()->user())->with('company')->filter($filters)->latest()->paginate(15);
+        $tickets = Ticket::filter($filters)->filterByRole(request()->user())->with('company')->filter($filters)->latest()->paginate(15);
 
-        return view('driver.tickets.index', compact('tickets'));
+        return view('attorney.tickets.index', compact('tickets'));
     }
 
     /**
@@ -44,8 +44,7 @@ class DriverTicketController extends Controller
     {
         //
         $this->authorize('view', $ticket);
-        return view('driver.tickets.show', compact('ticket'));
-
+        return view('attorney.tickets.show', compact('ticket'));
     }
 
     /**

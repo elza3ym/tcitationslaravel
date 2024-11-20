@@ -514,36 +514,38 @@
                             <div class="card-header">
                                 <h5>Notes</h5>
                             </div>
-                            @if (count($ticket->notes))
-                            <div class="card-body">
-                                <div class="grid grid-cols-12 gap-6">
-                                @foreach($ticket->notes as $note)
-                                <div class="col-span-12 md:col-span-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                        <h6 class="mb-4">{{ $note->note }}</h6>
-                                        <span class="text-muted text-sm float-end"> {{ $note->user->name }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                                </div>
-
-                            </div>
-                            @else
                             <div class="card-body">
                                 <div class="grid grid-cols-12 gap-6">
                                     <div class="col-span-12 md:col-span-12">
-                                        <div class="mb-3 flex flex-col items-center bg-yellow-100 p-4">
-                                            <!-- SVG Icon -->
-                                            <span class="ti ti-mood-empty text-blue-400 block text-[50px]"></span>
-                                            <!-- Warning Message -->
-                                            <span class="font-bold">This ticket has no notes.</span>
+                                        <div class="mb-3">
+                                            <label class="form-label">Note</label>
+                                            <div class="flex items-center flex-col">
+                                                <div class="grow mx-3 w-full">
+                                                    <textarea class="form-control" id="newTicketNote" name="note"></textarea>
+                                                </div>
+                                                <div class="shrink-0 mt-3">
+                                                    <button type="button" class="btn btn-primary" id="addNoteBtn">Add Note</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                            <div class="card-body">
+                                <div class="grid grid-cols-12 gap-6" id="notesList">
+                                    @foreach($ticket->notes as $note)
+                                        <div class="col-span-12 md:col-span-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="mb-4">{{ $note->note }}</h6>
+                                                    <span class="text-muted text-sm float-end"> {{ $note->user->name }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -628,6 +630,54 @@
             }
         }
         showAddressOnMap();
+
+        document.addEventListener('click', function (e) {
+            let addNoteBtn = e.target.closest('#addNoteBtn');
+            if (addNoteBtn) {
+                // Create a new XMLHttpRequest object
+                const xhr = new XMLHttpRequest();
+
+                const url = "{{ route('api.tickets-note.store', $ticket->id) }}";
+
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 201) {
+                            // Request succeeded, handle response here
+                            let data = JSON.parse(xhr.responseText);
+                            document.getElementById('notesList').innerHTML += ('<div class="col-span-12 md:col-span-6">'+
+                                '<div class="card">'+
+                                '<div class="card-body">'+
+                                '<h6 class="mb-4">'+data.note+'</h6>'+
+                                '<span class="text-muted text-sm float-end"> {{ Auth::user()->name }}</span>'+
+                                '</div>'+
+                                '</div>'+
+                                '</div>')
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Note added successfully'
+                            });
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Something went wrong!'
+                            });
+                        }
+                    }
+                };
+
+                const data = JSON.stringify({
+                    note: document.getElementById('newTicketNote').value,
+                });
+
+                xhr.send(data);
+                document.getElementById('newTicketNote').value = '';
+            }
+        })
+
     </script>
 @endsection
 @section('css')

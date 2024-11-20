@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="col-span-12">
-        <form action="{{ route(Auth::user()->roles->first()->name.'.managers.store') }}" method="POST">
+        <form action="{{ route(auth()->user()->roles->first()->name.'.drivers.store') }}" method="POST">
             @csrf
             <div class="card">
                 <div class="card-body !py-0">
@@ -28,17 +28,6 @@
                                 Notification Settings
                             </a>
                         </li>
-                        <li class="group">
-                            <a
-                                href="javascript:void(0);"
-                                data-pc-toggle="tab"
-                                data-pc-target="companiesTab"
-                                class="inline-flex items-center mr-6 py-4 transition-all duration-300 ease-linear border-t-2 border-b-2 border-transparent group-[.active]:text-primary-500 group-[.active]:border-b-primary-500 hover:text-primary-500 active:text-primary-500"
-                            >
-                                <i class="ti ti-building ltr:mr-2 rtl:ml-2 text-lg leading-none"></i>
-                                Manager Companies
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -58,7 +47,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="name">Name</label>
-                                                <input type="text"  name="name" id="name" class="form-control" value="{{ old('name') }}" required autofocus />
+                                                <input type="text"  name="name" id="name" class="form-control" value="{{ old('name', $ticket?->name) }}" required autofocus />
                                                 @if ($errors->has('name'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('name') }}</strong>
@@ -68,8 +57,23 @@
                                         </div>
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
+                                                <label class="form-label">Company</label>
+                                                <select
+                                                    class="form-control"
+                                                    name="company_id"
+                                                    id="companies"
+                                                ></select>
+                                                @if ($errors->has('company_id'))
+                                                    <span class="invalid-feedback text-danger">
+                                                            <strong>{{ $errors->first('company_id') }}</strong>
+                                                        </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-span-12 sm:col-span-6">
+                                            <div class="mb-3">
                                                 <label class="form-label" for="email">Email</label>
-                                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required />
+                                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $ticket?->email) }}" required />
                                                 @if ($errors->has('email'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('email') }}</strong>
@@ -91,7 +95,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="phone">Phone</label>
-                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" />
+                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', $ticket?->phone) }}" />
                                                 @if ($errors->has('phone'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('phone') }}</strong>
@@ -104,7 +108,7 @@
                                                 <label class="form-label" for="dateOfBirth">Date of birth</label>
                                                 <div class="input-group date">
                                                     <input type="text" name="dob" class="form-control" placeholder="Select date"
-                                                           id="dateOfBirth" value="{{ old('dob') }}"/>
+                                                           id="dateOfBirth" value="{{ old('dob', $ticket?->dob) }}"/>
                                                     <span class="input-group-text">
                                                           <i class="feather icon-calendar"></i>
                                                         </span>
@@ -119,7 +123,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="address">Address</label>
-                                                <input type="text" name="address" id="address" class="form-control" value="{{ old('address') }}" />
+                                                <input type="text" name="address" id="address" class="form-control" value="{{ old('address', $ticket?->address) }}" />
                                                 @if ($errors->has('address'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('address') }}</strong>
@@ -130,7 +134,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="city">City</label>
-                                                <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}" />
+                                                <input type="text" name="city" id="city" class="form-control" value="{{ old('city', $ticket?->city) }}" />
                                                 @if ($errors->has('city'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('city') }}</strong>
@@ -142,57 +146,57 @@
                                             <div class="mb-3">
                                                 <label class="form-label" for="state">State</label>
                                                 <select class="form-control" name="state" data-trigger name="state" id="state">
-                                                    <option value="AL" {{ old('state') == 'AL' ? 'selected' : '' }}>Alabama</option>
-                                                    <option value="AK" {{ old('state') == 'AK' ? 'selected' : '' }}>Alaska</option>
-                                                    <option value="AZ" {{ old('state') == 'AZ' ? 'selected' : '' }}>Arizona</option>
-                                                    <option value="AR" {{ old('state') == 'AR' ? 'selected' : '' }}>Arkansas</option>
-                                                    <option value="CA" {{ old('state') == 'CA' ? 'selected' : '' }}>California</option>
-                                                    <option value="CO" {{ old('state') == 'CO' ? 'selected' : '' }}>Colorado</option>
-                                                    <option value="CT" {{ old('state') == 'CT' ? 'selected' : '' }}>Connecticut</option>
-                                                    <option value="DE" {{ old('state') == 'DE' ? 'selected' : '' }}>Delaware</option>
-                                                    <option value="DC" {{ old('state') == 'DC' ? 'selected' : '' }}>District Of Columbia</option>
-                                                    <option value="FL" {{ old('state') == 'FL' ? 'selected' : '' }}>Florida</option>
-                                                    <option value="GA" {{ old('state') == 'GA' ? 'selected' : '' }}>Georgia</option>
-                                                    <option value="HI" {{ old('state') == 'HI' ? 'selected' : '' }}>Hawaii</option>
-                                                    <option value="ID" {{ old('state') == 'ID' ? 'selected' : '' }}>Idaho</option>
-                                                    <option value="IL" {{ old('state') == 'IL' ? 'selected' : '' }}>Illinois</option>
-                                                    <option value="IN" {{ old('state') == 'IN' ? 'selected' : '' }}>Indiana</option>
-                                                    <option value="IA" {{ old('state') == 'IA' ? 'selected' : '' }}>Iowa</option>
-                                                    <option value="KS" {{ old('state') == 'KS' ? 'selected' : '' }}>Kansas</option>
-                                                    <option value="KY" {{ old('state') == 'KY' ? 'selected' : '' }}>Kentucky</option>
-                                                    <option value="LA" {{ old('state') == 'LA' ? 'selected' : '' }}>Louisiana</option>
-                                                    <option value="ME" {{ old('state') == 'ME' ? 'selected' : '' }}>Maine</option>
-                                                    <option value="MD" {{ old('state') == 'MD' ? 'selected' : '' }}>Maryland</option>
-                                                    <option value="MA" {{ old('state') == 'MA' ? 'selected' : '' }}>Massachusetts</option>
-                                                    <option value="MI" {{ old('state') == 'MI' ? 'selected' : '' }}>Michigan</option>
-                                                    <option value="MN" {{ old('state') == 'MN' ? 'selected' : '' }}>Minnesota</option>
-                                                    <option value="MS" {{ old('state') == 'MS' ? 'selected' : '' }}>Mississippi</option>
-                                                    <option value="MO" {{ old('state') == 'MO' ? 'selected' : '' }}>Missouri</option>
-                                                    <option value="MT" {{ old('state') == 'MT' ? 'selected' : '' }}>Montana</option>
-                                                    <option value="NE" {{ old('state') == 'NE' ? 'selected' : '' }}>Nebraska</option>
-                                                    <option value="NV" {{ old('state') == 'NV' ? 'selected' : '' }}>Nevada</option>
-                                                    <option value="NH" {{ old('state') == 'NH' ? 'selected' : '' }}>New Hampshire</option>
-                                                    <option value="NJ" {{ old('state') == 'NJ' ? 'selected' : '' }}>New Jersey</option>
-                                                    <option value="NM" {{ old('state') == 'NM' ? 'selected' : '' }}>New Mexico</option>
-                                                    <option value="NY" {{ old('state') == 'NY' ? 'selected' : '' }}>New York</option>
-                                                    <option value="NC" {{ old('state') == 'NC' ? 'selected' : '' }}>North Carolina</option>
-                                                    <option value="ND" {{ old('state') == 'ND' ? 'selected' : '' }}>North Dakota</option>
-                                                    <option value="OH" {{ old('state') == 'OH' ? 'selected' : '' }}>Ohio</option>
-                                                    <option value="OK" {{ old('state') == 'OK' ? 'selected' : '' }}>Oklahoma</option>
-                                                    <option value="OR" {{ old('state') == 'OR' ? 'selected' : '' }}>Oregon</option>
-                                                    <option value="PA" {{ old('state') == 'PA' ? 'selected' : '' }}>Pennsylvania</option>
-                                                    <option value="RI" {{ old('state') == 'RI' ? 'selected' : '' }}>Rhode Island</option>
-                                                    <option value="SC" {{ old('state') == 'SC' ? 'selected' : '' }}>South Carolina</option>
-                                                    <option value="SD" {{ old('state') == 'SD' ? 'selected' : '' }}>South Dakota</option>
-                                                    <option value="TN" {{ old('state') == 'TN' ? 'selected' : '' }}>Tennessee</option>
-                                                    <option value="TX" {{ old('state') == 'TX' ? 'selected' : '' }}>Texas</option>
-                                                    <option value="UT" {{ old('state') == 'UT' ? 'selected' : '' }}>Utah</option>
-                                                    <option value="VT" {{ old('state') == 'VT' ? 'selected' : '' }}>Vermont</option>
-                                                    <option value="VA" {{ old('state') == 'VA' ? 'selected' : '' }}>Virginia</option>
-                                                    <option value="WA" {{ old('state') == 'WA' ? 'selected' : '' }}>Washington</option>
-                                                    <option value="WV" {{ old('state') == 'WV' ? 'selected' : '' }}>West Virginia</option>
-                                                    <option value="WI" {{ old('state') == 'WI' ? 'selected' : '' }}>Wisconsin</option>
-                                                    <option value="WY" {{ old('state') == 'WY' ? 'selected' : '' }}>Wyoming</option>
+                                                    <option value="AL" {{ old('state', $ticket?->state) == 'AL' ? 'selected' : '' }}>Alabama</option>
+                                                    <option value="AK" {{ old('state', $ticket?->state) == 'AK' ? 'selected' : '' }}>Alaska</option>
+                                                    <option value="AZ" {{ old('state', $ticket?->state) == 'AZ' ? 'selected' : '' }}>Arizona</option>
+                                                    <option value="AR" {{ old('state', $ticket?->state) == 'AR' ? 'selected' : '' }}>Arkansas</option>
+                                                    <option value="CA" {{ old('state', $ticket?->state) == 'CA' ? 'selected' : '' }}>California</option>
+                                                    <option value="CO" {{ old('state', $ticket?->state) == 'CO' ? 'selected' : '' }}>Colorado</option>
+                                                    <option value="CT" {{ old('state', $ticket?->state) == 'CT' ? 'selected' : '' }}>Connecticut</option>
+                                                    <option value="DE" {{ old('state', $ticket?->state) == 'DE' ? 'selected' : '' }}>Delaware</option>
+                                                    <option value="DC" {{ old('state', $ticket?->state) == 'DC' ? 'selected' : '' }}>District Of Columbia</option>
+                                                    <option value="FL" {{ old('state', $ticket?->state) == 'FL' ? 'selected' : '' }}>Florida</option>
+                                                    <option value="GA" {{ old('state', $ticket?->state) == 'GA' ? 'selected' : '' }}>Georgia</option>
+                                                    <option value="HI" {{ old('state', $ticket?->state) == 'HI' ? 'selected' : '' }}>Hawaii</option>
+                                                    <option value="ID" {{ old('state', $ticket?->state) == 'ID' ? 'selected' : '' }}>Idaho</option>
+                                                    <option value="IL" {{ old('state', $ticket?->state) == 'IL' ? 'selected' : '' }}>Illinois</option>
+                                                    <option value="IN" {{ old('state', $ticket?->state) == 'IN' ? 'selected' : '' }}>Indiana</option>
+                                                    <option value="IA" {{ old('state', $ticket?->state) == 'IA' ? 'selected' : '' }}>Iowa</option>
+                                                    <option value="KS" {{ old('state', $ticket?->state) == 'KS' ? 'selected' : '' }}>Kansas</option>
+                                                    <option value="KY" {{ old('state', $ticket?->state) == 'KY' ? 'selected' : '' }}>Kentucky</option>
+                                                    <option value="LA" {{ old('state', $ticket?->state) == 'LA' ? 'selected' : '' }}>Louisiana</option>
+                                                    <option value="ME" {{ old('state', $ticket?->state) == 'ME' ? 'selected' : '' }}>Maine</option>
+                                                    <option value="MD" {{ old('state', $ticket?->state) == 'MD' ? 'selected' : '' }}>Maryland</option>
+                                                    <option value="MA" {{ old('state', $ticket?->state) == 'MA' ? 'selected' : '' }}>Massachusetts</option>
+                                                    <option value="MI" {{ old('state', $ticket?->state) == 'MI' ? 'selected' : '' }}>Michigan</option>
+                                                    <option value="MN" {{ old('state', $ticket?->state) == 'MN' ? 'selected' : '' }}>Minnesota</option>
+                                                    <option value="MS" {{ old('state', $ticket?->state) == 'MS' ? 'selected' : '' }}>Mississippi</option>
+                                                    <option value="MO" {{ old('state', $ticket?->state) == 'MO' ? 'selected' : '' }}>Missouri</option>
+                                                    <option value="MT" {{ old('state', $ticket?->state) == 'MT' ? 'selected' : '' }}>Montana</option>
+                                                    <option value="NE" {{ old('state', $ticket?->state) == 'NE' ? 'selected' : '' }}>Nebraska</option>
+                                                    <option value="NV" {{ old('state', $ticket?->state) == 'NV' ? 'selected' : '' }}>Nevada</option>
+                                                    <option value="NH" {{ old('state', $ticket?->state) == 'NH' ? 'selected' : '' }}>New Hampshire</option>
+                                                    <option value="NJ" {{ old('state', $ticket?->state) == 'NJ' ? 'selected' : '' }}>New Jersey</option>
+                                                    <option value="NM" {{ old('state', $ticket?->state) == 'NM' ? 'selected' : '' }}>New Mexico</option>
+                                                    <option value="NY" {{ old('state', $ticket?->state) == 'NY' ? 'selected' : '' }}>New York</option>
+                                                    <option value="NC" {{ old('state', $ticket?->state) == 'NC' ? 'selected' : '' }}>North Carolina</option>
+                                                    <option value="ND" {{ old('state', $ticket?->state) == 'ND' ? 'selected' : '' }}>North Dakota</option>
+                                                    <option value="OH" {{ old('state', $ticket?->state) == 'OH' ? 'selected' : '' }}>Ohio</option>
+                                                    <option value="OK" {{ old('state', $ticket?->state) == 'OK' ? 'selected' : '' }}>Oklahoma</option>
+                                                    <option value="OR" {{ old('state', $ticket?->state) == 'OR' ? 'selected' : '' }}>Oregon</option>
+                                                    <option value="PA" {{ old('state', $ticket?->state) == 'PA' ? 'selected' : '' }}>Pennsylvania</option>
+                                                    <option value="RI" {{ old('state', $ticket?->state) == 'RI' ? 'selected' : '' }}>Rhode Island</option>
+                                                    <option value="SC" {{ old('state', $ticket?->state) == 'SC' ? 'selected' : '' }}>South Carolina</option>
+                                                    <option value="SD" {{ old('state', $ticket?->state) == 'SD' ? 'selected' : '' }}>South Dakota</option>
+                                                    <option value="TN" {{ old('state', $ticket?->state) == 'TN' ? 'selected' : '' }}>Tennessee</option>
+                                                    <option value="TX" {{ old('state', $ticket?->state) == 'TX' ? 'selected' : '' }}>Texas</option>
+                                                    <option value="UT" {{ old('state', $ticket?->state) == 'UT' ? 'selected' : '' }}>Utah</option>
+                                                    <option value="VT" {{ old('state', $ticket?->state) == 'VT' ? 'selected' : '' }}>Vermont</option>
+                                                    <option value="VA" {{ old('state', $ticket?->state) == 'VA' ? 'selected' : '' }}>Virginia</option>
+                                                    <option value="WA" {{ old('state', $ticket?->state) == 'WA' ? 'selected' : '' }}>Washington</option>
+                                                    <option value="WV" {{ old('state', $ticket?->state) == 'WV' ? 'selected' : '' }}>West Virginia</option>
+                                                    <option value="WI" {{ old('state', $ticket?->state) == 'WI' ? 'selected' : '' }}>Wisconsin</option>
+                                                    <option value="WY" {{ old('state', $ticket?->state) == 'WY' ? 'selected' : '' }}>Wyoming</option>
                                                 </select>
                                                 @if ($errors->has('state'))
                                                     <span class="invalid-feedback text-danger">
@@ -204,7 +208,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="zip">Zip code</label>
-                                                <input type="text" name="zip" id="zip" class="form-control" value="{{ old('zip') }}"/>
+                                                <input type="text" name="zip" id="zip" class="form-control" value="{{ old('zip', $ticket?->zip) }}"/>
                                                 @if ($errors->has('zip'))
                                                     <span class="invalid-feedback text-danger">
                                                             <strong>{{ $errors->first('zip') }}</strong>
@@ -309,85 +313,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="hidden tab-pane" id="companiesTab">
-                    <div class="grid grid-cols-12 gap-6">
-                        <div class="col-span-12 lg:col-span-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Manager Companies</h5>
-                                    <span class="text-muted text-sm">
-                                        {{ __("Companies that this manager can access data for.") }}
-                                    </span>
-                                </div>
-                                <div class="card-body">
-                                    <div class="grid grid-cols-12 gap-6 items-center">
-                                        <div class="col-span-12 sm:col-span-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Company</label>
-                                                <select
-                                                    class="form-control"
-                                                    name="company_id"
-                                                    id="companies"
-                                                ></select>
-                                                @if ($errors->has('company_id'))
-                                                    <span class="invalid-feedback text-danger">
-                                                    <strong>{{ $errors->first('company_id') }}</strong>
-                                                </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-span-12 sm:col-span-2">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="write_access">Write Access ?</label>
-                                                <div class="form-check form-switch">
-                                                    <input
-                                                        id="writeAccess"
-                                                        class="form-check-input h4 position-relative m-0"
-                                                        type="checkbox"
-                                                        role="switch"
-                                                        value="Yes"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-span-12 sm:col-span-2">
-                                            <div class="mb-3 mt-5">
-                                                <button class="btn btn-primary px-6" id="addCompanyToManager">Add</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-12 gap-1" id="companyManagersList">
-                        @if (old('managerCompany_id'))
-                        @foreach(old('managerCompany_id') as $index => $managerCompany)
-                        <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
-                            <div class="card">
-                                <div class="card-body flex justify-between align-middle items-center">
-                                    <div class="font-bold">
-                                        <h5 class="mb-3 block">{{ old('managerCompany_name')[$index] }}</h5>
-                                        <span class="ti {{ old('managerCompany_name')[$index] === 'Yes' ?  'text-success ti-check' : 'text-danger ti-x'}} text-right text-[20px]"></span> Write Access
-                                    </div>
-                                    <div class="text-right">
-                                        <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary">
-                                            <i class="ti ti-trash text-xl leading-none"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="managerCompany_id[]" value="{{ old('managerCompany_id')[$index] }}">
-                                <input type="hidden" name="managerCompany_name[]" value="{{ old('managerCompany_name')[$index] }}">
-                                <input type="hidden" name="managerCompany_isWrite[]" value="{{ old('managerCompany_isWrite')[$index] }}">
-                            </div>
-                        </div>
-                        @endforeach
-                        @endif
-                    </div>
-                </div>
                 <div class="col-span-12 text-right">
                     <button type="reset" class="btn btn-outline-secondary mx-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1">Create Manager</button>
+                    <button type="submit" class="btn btn-primary mx-1">Create Driver</button>
                 </div>
             </div>
         </form>
@@ -396,6 +324,7 @@
 @section('post-scripts')
     <script src="{{ asset('js/plugins/flatpickr.min.js') }}"></script>
     <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
+
     <script>
         flatpickr(document.querySelector('#dateOfBirth'));
 
@@ -404,8 +333,7 @@
             placeholderValue: 'Company Name',
             maxItemCount: 5,
             shouldSort: false, // Optional: keeps the order of items as provided
-        })
-        companiesChoices.setChoices(function () {
+        }).setChoices(function () {
             return fetch('{{ route('api.company.index') }}')
                 .then(function (response) {
                     return response.json();
@@ -415,80 +343,15 @@
                         value: '',
                         label: 'Select an option',
                         disabled: true,
-                        selected: {{ !old('company_id') ? 'true' : 'false' }} },
+                        selected: {{ !old('company_id', $ticket->company_id) ? 'true' : 'false' }} },
                         ...data.map(function (company) {
                         return {
                             value: company.id,
                             label: company.name,
-                            selected: Number('{{ old('company_id') }}') === Number(company.id)
+                            selected: Number('{{ old('company_id', $ticket->company_id) }}') === Number(company.id)
                         };
                     })];
                 });
-        });
-
-        document.addEventListener('click', function (e) {
-            let addCompanyToManagerBtn = e.target.closest('#addCompanyToManager');
-            if (addCompanyToManagerBtn) {
-                e.preventDefault();
-                let selectedCompany = companiesChoices.getValue();
-                const writeAccessCheckbox = document.getElementById("writeAccess");
-                const hasWriteAccess = writeAccessCheckbox.checked ? "Yes" : "No";
-                let icon = writeAccessCheckbox.checked ? 'text-success ti-check' : 'text-danger ti-x';
-                if (!selectedCompany || selectedCompany.value === "") {
-                    return Toast.fire({
-                        icon: 'info',
-                        title: 'Please select a company from company list.'
-                    });
-                }
-
-                let companyName = selectedCompany.label;
-                let companyId = selectedCompany.value;
-
-                // Check if the company is already added
-                const existingCompanies = document.querySelectorAll(
-                    '#companyManagersList input[name="managerCompany_id[]"]'
-                );
-                for (let existingCompany of existingCompanies) {
-                    if (Number(existingCompany.value) === Number(companyId)) {
-                        return Toast.fire({
-                            icon: 'info',
-                            title: 'This company is already added.'
-                        });
-                    }
-                }
-
-                // Template to add
-                const template = `
-                    <div class="col-span-12 lg:col-span-6 xl:col-span-4 company-manager-item">
-                        <div class="card">
-                            <div class="card-body flex justify-between align-middle items-center">
-                                <div class="font-bold">
-                                    <h5 class="mb-3 block">${companyName}</h5>
-                                    <span class="ti ${icon} text-right text-[20px]"></span> Write Access
-                                </div>
-                                <div class="text-right">
-                                    <a href="#" id="removeCompanyManagerBtn" class="w-8 h-8 rounded-xl inline-flex items-center justify-center btn-link-secondary remove-entry">
-                                        <i class="ti ti-trash text-xl leading-none"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <input type="hidden" name="managerCompany_id[]" value="${companyId}">
-                            <input type="hidden" name="managerCompany_name[]" value="${companyName}">
-                            <input type="hidden" name="managerCompany_isWrite[]" value="${hasWriteAccess}">
-                        </div>
-                    </div>
-                `;
-
-                // Append the template to the container (adjust the container selector as needed)
-                const container = document.querySelector("#companyManagersList");
-                container.insertAdjacentHTML("beforeend", template);
-            }
-
-            let removeCompanyManagerBtn = e.target.closest('#removeCompanyManagerBtn');
-            if(removeCompanyManagerBtn) {
-                e.preventDefault();
-                e.target.closest('.company-manager-item').remove();
-            }
         });
     </script>
 @endsection
