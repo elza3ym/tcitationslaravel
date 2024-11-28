@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\TicketObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
 
+#[ObservedBy([TicketObserver::class])]
 class Ticket extends Model
 {
     protected $fillable = [

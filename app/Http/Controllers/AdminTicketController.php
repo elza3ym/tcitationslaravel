@@ -89,7 +89,6 @@ class AdminTicketController extends Controller
             'processor_ph_number',
             'processor_notes_to_attorney'
         ]));
-
         return redirect()->route('admin.tickets.edit', $ticket->id)->with('success', 'Ticket created successfully.');
     }
 
@@ -150,33 +149,35 @@ class AdminTicketController extends Controller
             'processor_ph_number' => '',
             'processor_notes_to_attorney' => '',
         ]);
-        // Create a new Ticket record with the validated data
-        $ticket->update($request->only([
-            'user_email',
-            'name',
-            'company_id',
-            'city',
-            'state',
-            'zip',
-            'address',
-            'indicator',
-            'class_commercial',
-            'road_side_inspection',
-            'date_issued',
-            'vehicle_lic_no',
-            'violation_id',
-            'citation_no',
-            'ticket_type',
-            'court_name',
-            'court_date',
-            'court_address',
-            'attorney_id',
-            'attorney_response',
-            'processor_name',
-            'processor_email',
-            'processor_ph_number',
-            'processor_notes_to_attorney',
-        ]));
+        // Store the original fields before update
+        // Manually set the ticket attributes using $ticket->attribute = 'value'
+        $ticket->user_email = $request->input('user_email');
+        $ticket->name = $request->input('name');
+        $ticket->company_id = $request->input('company_id');
+        $ticket->city = $request->input('city');
+        $ticket->state = $request->input('state');
+        $ticket->zip = $request->input('zip');
+        $ticket->address = $request->input('address');
+        $ticket->indicator = $request->input('indicator');
+        $ticket->class_commercial = $request->input('class_commercial');
+        $ticket->road_side_inspection = $request->input('road_side_inspection');
+        $ticket->date_issued = $request->input('date_issued');
+        $ticket->vehicle_lic_no = $request->input('vehicle_lic_no');
+        $ticket->violation_id = $request->input('violation_id');
+        $ticket->citation_no = $request->input('citation_no');
+        $ticket->ticket_type = $request->input('ticket_type');
+        $ticket->court_name = $request->input('court_name');
+        $ticket->court_date = $request->input('court_date');
+        $ticket->court_address = $request->input('court_address');
+        $ticket->attorney_id = $request->input('attorney_id');
+        $ticket->attorney_response = $request->input('attorney_response');
+        $ticket->processor_name = $request->input('processor_name');
+        $ticket->processor_email = $request->input('processor_email');
+        $ticket->processor_ph_number = $request->input('processor_ph_number');
+        $ticket->processor_notes_to_attorney = $request->input('processor_notes_to_attorney');
+
+        // Save the updated ticket
+        $ticket->save();
 
         return redirect()->route('admin.tickets.edit', $ticket->id)->with('success', 'Ticket updated successfully.');
     }

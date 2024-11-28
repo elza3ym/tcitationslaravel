@@ -73,6 +73,7 @@ return new class extends Migration
             $table->string('total_dver_points__c', 299)->nullable();
             $table->string('total_dver_points_removed__c', 299)->nullable();
             $table->string('attorney_response', 299)->nullable();
+            $table->boolean('is_approved')->default(true);
             $table->timestamps();
         });
     }

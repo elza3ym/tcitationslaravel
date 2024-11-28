@@ -8,9 +8,11 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyTicketController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\DriverTicketController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ManagerTicketController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DriverController as APIDriverController;
 use App\Http\Controllers\Api\CompanyController as APICompanyController;
@@ -38,6 +40,9 @@ Route::group(['middleware' => 'auth'], function () {
         abort(403);
     })->middleware(['auth', 'verified'])->name('dashboard');
 
+    Route::get('support', [SupportController::class, 'index'])->name('support.index');
+    Route::post('support', [SupportController::class, 'store'])->name('support.store');
+
     // Admin Routes.
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
         // Dashboard
@@ -50,6 +55,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('managers', ManagerController::class);
         Route::resource('attorneys', AttorneyController::class);
         Route::resource('drivers', DriverController::class);
+
+        Route::get('logs', [LogController::class, 'index'])->name('logs.index');
     });
 
     // Manager Routes

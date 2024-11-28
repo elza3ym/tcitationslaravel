@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger('ticket_id');
             $table->bigInteger('user_id')->nullable();
             $table->text('note');
+            $table->boolean('is_public')->default(true);
             $table->timestamps();
         });
     }

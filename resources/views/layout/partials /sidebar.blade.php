@@ -185,7 +185,7 @@
                     </a>
                 </li>
                 <li class="pc-item">
-                    <a href="../forms/form2_wizard.html" class="pc-link">
+                    <a href="{{ route('admin.logs.index') }}" class="pc-link">
             <span class="pc-micon">
               <svg class="pc-icon">
                 <use xlink:href="#custom-text-align-justify-center"></use>
@@ -203,12 +203,12 @@
                     </svg>
                 </li>
                 <li class="pc-item">
-                    <a href="../forms/form2_wizard.html" class="pc-link">
-            <span class="pc-micon">
-              <svg class="pc-icon">
-                <use xlink:href="#custom-24-support"></use>
-              </svg>
-            </span>
+                    <a href="{{ route('support.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                          <svg class="pc-icon">
+                            <use xlink:href="#custom-24-support"></use>
+                          </svg>
+                        </span>
                         <span class="pc-mtext">Support</span>
                     </a>
                 </li>

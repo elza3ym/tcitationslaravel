@@ -100,57 +100,48 @@
                         <svg class="pc-icon">
                             <use xlink:href="#custom-notification"></use>
                         </svg>
-                        <span class="badge bg-success-500 text-white rounded-full z-10 absolute right-0 top-0">2</span>
+                        @if(count(auth()->user()->unreadNotifications))
+                        <span class="badge bg-success-500 text-white rounded-full z-10 absolute right-0 top-0">{{ count(auth()->user()->unreadNotifications) }}</span>
+                        @endif
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown p-2">
                         <div class="dropdown-header flex items-center justify-between py-4 px-5">
                             <h5 class="m-0">Notifications</h5>
+                            @if(count(auth()->user()->unreadNotifications))
                             <a href="#!" class="btn btn-link btn-sm">Mark all read</a>
+                            @endif
                         </div>
                         <div class="dropdown-body header-notification-scroll relative py-4 px-5" style="max-height: calc(100vh - 215px)">
-                            <p class="text-span mb-3">Today</p>
+                            @forelse(auth()->user()->unreadNotifications as $notification)
                             <div class="card mb-2">
                                 <div class="card-body">
+                                    <a href="{{ $notification->data['url'] }}">
                                     <div class="flex gap-4">
                                         <div class="shrink-0">
                                             <svg class="pc-icon text-primary w-[22px] h-[22px]">
-                                                <use xlink:href="#custom-document"></use>
+                                                <use xlink:href="#custom-notification-status"></use>
                                             </svg>
                                         </div>
                                         <div class="grow">
-                                            <span class="float-end text-sm text-muted">2 min ago</span>
-                                            <h5 class="text-body mb-2">Tickets</h5>
+                                            <span class="float-end text-sm text-muted">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
+                                            <h5 class="text-body mb-2">{{ $notification->data['title'] }}</h5>
                                             <p class="mb-0">
-                                                Your ticket is now marked as <span class="text-success">completed</span> by the assigned person.
+                                                {{ $notification->data['content'] ?? '' }}
                                             </p>
                                         </div>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
-                            <p class="text-span mb-3 mt-4">Yesterday</p>
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <div class="flex gap-4">
-                                        <div class="shrink-0">
-                                            <svg class="pc-icon text-primary w-[22px] h-[22px]">
-                                                <use xlink:href="#custom-document"></use>
-                                            </svg>
-                                        </div>
-                                        <div class="grow">
-                                            <span class="float-end text-sm text-muted">26 hours ago</span>
-                                            <h5 class="text-body mb-2">Tickets</h5>
-                                            <p class="mb-0">
-                                                Your ticket is now marked as <span class="text-primary">processing in progress</span> by the assigned person.
-                                            </p>
-                                        </div>
-                                    </div>
+                            @empty
+                                <div class="flex justify-center flex-col align-middle items-center">
+                                    <span class="text-[50px] text-secondary icon-bold fa fa-bell-slash grow mb-6"></span>
+                                    <span class="text-muted">
+                                        You're all caught up! No new notifications at the moment.
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="text-center py-2">
-                            <a href="#!" class="text-danger-500 hover:text-danger-600 focus:text-danger-600 active:text-danger-600">
-                                Clear all Notifications
-                            </a>
+
+                            @endforelse
                         </div>
                     </div>
                 </li>

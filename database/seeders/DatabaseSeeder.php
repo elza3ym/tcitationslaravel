@@ -119,9 +119,16 @@ class DatabaseSeeder extends Seeder
         ]);
         // Create role Models.
         $admin = Admin::create([]);
-        $company = Company::create([]);
-        $manager = Manager::create([
-            'company_id' => $company->id
+        $company = Company::create([
+            'name' => 'Company #1',
+            'ct_email' => 'citation@email.com',
+            'ct_fname' => 'Company Fname',
+            'ct_lname' => 'Company Lname',
+            'dot' => '15081997'
+        ]);
+        $manager = Manager::create([]);
+        $manager->companies()->attach($company->id, [
+            'is_write_access' => true
         ]);
         $attorney = Attorney::create([]);
         $driver = Driver::create([
