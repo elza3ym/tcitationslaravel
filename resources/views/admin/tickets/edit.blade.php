@@ -607,6 +607,18 @@
                                                     <div class="grow mx-3 w-full">
                                                         <textarea class="form-control" id="newTicketNote" name="note"></textarea>
                                                     </div>
+                                                    <div class="form-check form-switch p-0 inline w-full mt-4">
+                                                        Public ?
+                                                        <input
+                                                            name="is_note_public"
+                                                            class="form-check-input h4 position-relative m-0"
+                                                            type="checkbox"
+                                                            role="switch"
+                                                            value="Yes"
+                                                            id="isNotePublic"
+                                                            {{ !old('is_note_public', $ticket->is_note_public) !== 'No'? 'checked' : '' }}
+                                                        />
+                                                    </div>
                                                     <div class="shrink-0 mt-3">
                                                         <button type="button" class="btn btn-primary" id="addNoteBtn">Add Note</button>
                                                     </div>
@@ -621,8 +633,17 @@
                                             <div class="col-span-12 md:col-span-6">
                                                 <div class="card">
                                                     <div class="card-body">
+                                                        @if(!$note->is_public)
+                                                            <div class="absolute right-0 top-0 bg-secondary rounded px-2 py-1 text-white">
+                                                                Private
+                                                                <svg class="pc-icon h-[1.25em] w-[2em] inline">
+                                                                    <use xlink:href="#custom-lock-outline"></use>
+                                                                </svg>
+                                                            </div>
+                                                        @endif
                                                         <h6 class="mb-4">{{ $note->note }}</h6>
-                                                        <span class="text-muted text-sm float-end"> {{ $note->user->name }}</span>
+                                                        <span class="absolute left-0 bottom-0-0 bg-info-950 px-2 py-1 text-white rounded"> <span class="ti ti-clock"></span> {{ \Carbon\Carbon::parse($note->created_at)->diffForHumans() }}</span>
+                                                        <span class="absolute right-0 bottom-0-0 bg-success px-2 py-1 text-white rounded"> <span class="ti ti-user"></span> {{ $note->user->name }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -890,14 +911,25 @@
                         if (xhr.status === 201) {
                             // Request succeeded, handle response here
                             let data = JSON.parse(xhr.responseText);
-                            document.getElementById('notesList').innerHTML += ('<div class="col-span-12 md:col-span-6">'+
-                                '<div class="card">'+
-                                '<div class="card-body">'+
-                                '<h6 class="mb-4">'+data.note+'</h6>'+
-                                '<span class="text-muted text-sm float-end"> {{ Auth::user()->name }}</span>'+
+                            let newNoteString = '<div class="col-span-12 md:col-span-6">'+
+                            '<div class="card">'+
+                            '<div class="card-body">';
+
+                            if (!data.is_public) {
+                                newNoteString += '<div class="absolute right-0 top-0 bg-secondary rounded px-2 py-1 text-white">'+
+                                    'Private'+
+                                    '<svg class="pc-icon h-[1.25em] w-[2em] inline">'+
+                                    '<use xlink:href="#custom-lock-outline"></use>'+
+                                    '</svg>'+
+                                    '</div>';
+                            }
+                            newNoteString += '<h6 class="mb-4">'+data.note+'</h6>'+
+                                '<span class="absolute left-0 bottom-0-0 bg-info-950 px-2 py-1 text-white rounded"> <span class="ti ti-clock"></span> now </span>'+
+                                '<span class="absolute right-0 bottom-0-0 bg-success px-2 py-1 text-white rounded"> <span class="ti ti-user"></span> {{ auth()->user()->name }}</span>'+
                                 '</div>'+
                                 '</div>'+
-                                '</div>')
+                                '</div>';
+                            document.getElementById('notesList').innerHTML += (newNoteString)
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Note added successfully'
@@ -913,6 +945,7 @@
 
                 const data = JSON.stringify({
                     note: document.getElementById('newTicketNote').value,
+                    is_public: document.getElementById('isNotePublic').checked,
                 });
 
                 xhr.send(data);

@@ -11,6 +11,7 @@ use App\Http\Controllers\DriverTicketController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ManagerTicketController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         return redirect('dashboard');
     });
+
+    // Mark all notifications as read
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+
+    // Mark a single notification as read
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+
 
     Route::get('/dashboard', function () {
         $user = \Illuminate\Support\Facades\Auth::user();
@@ -49,6 +58,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
         // tickets.
+        Route::post('tickets/bulk', [AdminTicketController::class, 'bulkUpdate'])->name('tickets.bulkUpdate');
+        Route::get('tickets/export', [AdminTicketController::class, 'export'])->name('tickets.export');
+        Route::get('tickets/archive', [AdminTicketController::class, 'archive'])->name('tickets.archive');
+        Route::post('tickets/{ticket}/restore', [AdminTicketController::class, 'restore'])->name('tickets.restore');
         Route::resource('tickets', AdminTicketController::class);
         Route::resource('admins', AdminController::class);
         Route::resource('companies', CompanyController::class);
@@ -62,16 +75,19 @@ Route::group(['middleware' => 'auth'], function () {
     // Manager Routes
     Route::group(['middleware' => 'role:manager', 'prefix' => 'manager', 'as' => 'manager.'], function () {
         Route::get('dashboard', [ManagerController::class, 'dashboard'])->name('dashboard');
+        Route::get('tickets/export', [ManagerTicketController::class, 'export'])->name('tickets.export');
 
         Route::resource('tickets', ManagerTicketController::class);
         Route::resource('companies', CompanyController::class);
         Route::resource('managers', ManagerController::class);
         Route::resource('drivers', DriverController::class);
+
     });
 
     // Attorney Routes
     Route::group(['middleware' => 'role:attorney', 'prefix' => 'attorney', 'as' => 'attorney.'], function () {
         Route::get('dashboard', [AttorneyController::class, 'dashboard'])->name('dashboard');
+        Route::get('tickets/export', [AttorneyTicketController::class, 'export'])->name('tickets.export');
         Route::resource('tickets', AttorneyTicketController::class);
         Route::resource('drivers', DriverController::class);
 
@@ -79,6 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Driver Routes
     Route::group(['middleware' => 'role:driver', 'prefix' => 'driver', 'as' => 'driver.'], function () {
+        Route::get('tickets/export', [DriverTicketController::class, 'export'])->name('tickets.export');
         Route::get('dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
         Route::resource('tickets', DriverTicketController::class);
     });

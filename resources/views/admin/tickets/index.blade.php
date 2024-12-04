@@ -75,6 +75,7 @@
                 <div class="sm:flex items-center justify-between">
                     <h5 class="mb-3 sm:mb-0">Tickets list</h5>
                     <div>
+                        <a href="{{ route('admin.tickets.export') }}" class="btn btn-success"><span class="fa fa-file-excel mr-2"></span>Download Tickets</a>
                         <a href="{{ route('admin.tickets.create') }}" class="btn btn-primary">Create Ticket</a>
                     </div>
                 </div>
@@ -99,7 +100,7 @@
                         @foreach($tickets as $ticket)
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="form-check-input">
+                                    <input type="checkbox" class="form-check-input" data-ticketid="{{ $ticket->id }}">
                                 </td>
                                 <td>
                                     <div class="flex items-center">
@@ -141,14 +142,16 @@
                 <div class="flex justify-between">
                     <div class="w-full">
                         <div class="grid grid-cols-12 gap-1 mb-4 text-center">
-                            <label for="inputEmail3" class="col-span-1 sm:col-span-1 col-form-label py-1">Action</label>
+                            <label for="bulkAction" class="col-span-1 sm:col-span-1 col-form-label py-1">Action</label>
                             <div class="col-span-2 sm:col-span-2">
-                                <select class="form-control form-control-sm" id="inputEmail3">
-                                    <option>Choose...</option>
-                                    <option>Action 1</option>
-                                    <option>Action 2</option>
-                                    <option>Action 3</option>
-                                </select>
+                                <form id="bulkActionForm" class="flex" method="POST" action="{{ route('admin.tickets.bulkUpdate') }}">
+                                    @csrf <!-- Laravel CSRF token -->
+                                    <select id="bulkAction" class="form-control form-control-sm" name="action">
+                                        <option value="">Select Action</option>
+                                        <option value="archive">Archive</option>
+                                    </select>
+                                    <button class="ml-4 bg-primary text-white rounded py-1 px-4" type="submit">Apply</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -229,6 +232,34 @@
                     })];
                 });
         });
+
+        document.querySelector('#bulkActionForm').addEventListener('submit', function (e) {
+            const form = e.target;
+            const selectedAction = document.querySelector('#bulkAction').value;
+            const selectedCheckboxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-ticketid]:checked'));
+
+            // Ensure an action is selected and at least one checkbox is checked
+            if (!selectedAction || selectedCheckboxes.length === 0) {
+                e.preventDefault(); // Stop form submission
+                return Toast.fire({
+                    icon: 'info',
+                    title: 'Please select an action and at least one item.'
+                });
+            }
+
+            // Remove any existing hidden inputs for IDs
+            form.querySelectorAll('input[name="ids[]"]').forEach(input => input.remove());
+
+            // Append the checked IDs as hidden inputs to the form
+            selectedCheckboxes.forEach(checkbox => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'ids[]';
+                hiddenInput.value = checkbox.dataset.ticketid;
+                form.appendChild(hiddenInput);
+            });
+        });
+
     </script>
 @endsection
 

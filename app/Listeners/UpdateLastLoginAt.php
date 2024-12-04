@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Models\Log;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 
 class UpdateLastLoginAt
@@ -23,5 +25,12 @@ class UpdateLastLoginAt
         $user = $event->user;
         $user->last_login_at = now();
         $user->save();
+
+        $user = auth()->user();
+        Log::create([
+            'action' => 'User Login',
+            'description' => "User {$user->name} Logged in.",
+            'user_id' => $user->id,
+        ]);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Ticket;
-use App\Policies\TicketPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,11 +24,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::guessPolicyNamesUsing(function (string $modelClass) {
             // Return the name of the policy class for the given model...
             if ($modelClass === \App\Models\Ticket::class) {
-                return \App\Policies\TicketPolicy::class;
+                return \App\Policies\Policies\TicketPolicy::class;
             } elseif ($modelClass === \App\Models\Company::class) {
-                return \App\Policies\CompanyPolicy::class;
+                return \App\Policies\Policies\CompanyPolicy::class;
             } elseif ($modelClass === \App\Models\Driver::class) {
-                return \App\Policies\DriverPolicy::class;
+                return \App\Policies\Policies\DriverPolicy::class;
             }
         });
 

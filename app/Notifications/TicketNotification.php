@@ -12,9 +12,6 @@ class TicketNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
     public function __construct(public Ticket $ticket, public string $eventType)
     {
         //
@@ -27,7 +24,14 @@ class TicketNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['database'];
+
+        // Add the mail channel only if there is content
+        if ($this->getContent($notifiable)) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
     }
 
     /**
@@ -35,22 +39,55 @@ class TicketNotification extends Notification
      */
     public function toMail(object $notifiable): ?MailMessage
     {
+        $content = $this->getContent($notifiable);
+
+        if (!$content) {
+            return null;
+        }
+
         $currentUserRole = $notifiable->roles->first()->name;
-        $subject = '';
-        $content = '';
+        $subject = $this->getSubject();
         $actionText = 'View Ticket';
+
+        return (new MailMessage)
+            ->subject($subject)
+            ->line($content)
+            ->action($actionText, route("{$currentUserRole}.tickets.show", $this->ticket->id))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the database representation of the notification.
+     */
+    public function toDatabase($notifiable)
+    {
+        $currentUserRole = $notifiable->roles->first()->name;
+
+        return [
+            'id' => $this->ticket->id,
+            'title' => $this->getSubject(),
+            'content' => $this->getContent($notifiable),
+            'event' => $this->eventType,
+            'url' => route("{$currentUserRole}.tickets.show", $this->ticket->id),
+        ];
+    }
+
+    /**
+     * Get the content for the notification.
+     */
+    protected function getContent($notifiable): ?string
+    {
+        $content = '';
         switch ($this->eventType) {
             case 'created':
-                $subject = "New Ticket #{$this->ticket->id} Created";
                 if ($notifiable->hasRole('admin')) {
-                    $content = "A new ticket has been submitted by {$this->ticket->driver->name}. Ticket ID: #{$this->ticket->id}.";
+                    $content = "A new ticket has been submitted by {$this->ticket->driver?->user?->name}. Ticket ID: #{$this->ticket->id}.";
                 } elseif ($notifiable->hasRole('driver')) {
                     $content = "Your ticket has been created successfully. Ticket ID: #{$this->ticket->id}.";
                 }
                 break;
 
             case 'assigned':
-                $subject = "Ticket #{$this->ticket->id} Assigned";
                 if ($notifiable->hasRole('admin')) {
                     $content = "Ticket ID #{$this->ticket->id} has been assigned to {$this->ticket->attorney->user->name}.";
                 } elseif ($notifiable->hasRole('driver')) {
@@ -59,8 +96,7 @@ class TicketNotification extends Notification
                 break;
 
             case 'status_updated':
-                $subject = "Ticket #{$this->ticket->id} Status Updated";
-                $status = $this->ticket->indicator; // Assuming status is stored in the ticket model
+                $status = $this->ticket->indicator;
                 if ($notifiable->hasRole('driver')) {
                     $content = "Ticket ID #{$this->ticket->id} is now {$status}.";
                 } elseif ($notifiable->hasRole('admin')) {
@@ -69,14 +105,12 @@ class TicketNotification extends Notification
                 break;
 
             case 'response':
-                $subject = "Update on Ticket #{$this->ticket->id}";
                 if ($notifiable->hasRole('driver')) {
                     $content = "An update has been added to your ticket ID #{$this->ticket->id}. Log in to view.";
                 }
                 break;
 
             case 'document_uploaded':
-                $subject = "New Document Uploaded for Ticket #{$this->ticket->id}";
                 if ($notifiable->hasRole('admin')) {
                     $content = "A new document has been uploaded to Ticket ID #{$this->ticket->id} by {$this->ticket->driver->name}.";
                 } elseif ($notifiable->hasRole('driver')) {
@@ -85,14 +119,18 @@ class TicketNotification extends Notification
                 break;
 
             case 'resolved':
-                $subject = "Ticket #{$this->ticket->id} Resolved";
                 if ($notifiable->hasRole('driver')) {
                     $content = "Your ticket ID #{$this->ticket->id} has been resolved. Contact us for any further concerns.";
                 }
                 break;
 
+            case 'approved':
+                if ($notifiable->hasRole('driver')) {
+                    $content = "Your ticket ID #{$this->ticket->id} has been approved. Contact us for any further concerns.";
+                }
+                break;
+
             case 'updated':
-                $subject = "Ticket #{$this->ticket->id} Updated";
                 if ($notifiable->hasRole('driver')) {
                     $content = "Your ticket #{$this->ticket->id} has been updated successfully.";
                 } elseif ($notifiable->hasRole('admin')) {
@@ -100,77 +138,25 @@ class TicketNotification extends Notification
                 }
                 break;
         }
-        if ($content) {
-            return (new MailMessage)
-                ->subject($subject)
-                ->line($content)
-                ->action($actionText, route("{$currentUserRole}.tickets.show", $this->ticket->id))
-                ->line('Thank you for using our application!');
-        }
-        return (new MailMessage);
+
+        return $content ?: null;
     }
 
-    public function toDatabase($notifiable)
+    /**
+     * Get the subject for the notification.
+     */
+    protected function getSubject(): string
     {
-        $currentUserRole = $notifiable->roles->first()->name;
-        $subject = '';
-        $content = '';
-
-        switch ($this->eventType) {
-            case 'created':
-                $subject = "New Ticket #{$this->ticket->id} Created";
-                $content = $notifiable->hasRole('admin')
-                    ? "A new ticket has been submitted by {$this->ticket->driver->name}. Ticket ID: #{$this->ticket->id}."
-                    : "Your ticket has been created successfully. Ticket ID: #{$this->ticket->id}.";
-                break;
-
-            case 'assigned':
-                $subject = "Ticket #{$this->ticket->id} Assigned";
-                $content = $notifiable->hasRole('admin')
-                    ? "Ticket ID #{$this->ticket->id} has been assigned to {$this->ticket->attorney->user->name}."
-                    : "Your ticket has been assigned to {$this->ticket->attorney->user->name}.";
-                break;
-
-            case 'status_updated':
-                $status = $this->ticket->indicator; // Assuming status is stored in the ticket model
-                $subject = "Ticket #{$this->ticket->id} Status Updated";
-                $content = $notifiable->hasRole('driver')
-                    ? "Ticket ID #{$this->ticket->id} is now {$status}."
-                    : "Ticket ID #{$this->ticket->id} has been changed to {$status}.";
-                break;
-
-            case 'response':
-                $subject = "Update on Ticket #{$this->ticket->id}";
-                $content = "An update has been added to your ticket ID #{$this->ticket->id}.";
-                break;
-
-            case 'document_uploaded':
-                $subject = "New Document Uploaded for Ticket #{$this->ticket->id}";
-                $content = $notifiable->hasRole('admin')
-                    ? "A new document has been uploaded to Ticket ID #{$this->ticket->id} by {$this->ticket->driver->name}."
-                    : "Your uploaded document for Ticket ID #{$this->ticket->id} has been received.";
-                break;
-
-            case 'resolved':
-                $subject = "Ticket #{$this->ticket->id} Resolved";
-                $content = "Your ticket ID #{$this->ticket->id} has been resolved. Contact us for any further concerns.";
-                break;
-
-            case 'updated':
-                $subject = "Ticket #{$this->ticket->id} Updated";
-                $content = $notifiable->hasRole('driver')
-                    ? "Your ticket #{$this->ticket->id} has been updated successfully."
-                    : "Ticket ID #{$this->ticket->id} has been updated.";
-                break;
-        }
-
-        return [
-            'id' => $this->ticket->id,
-            'title' => $subject,
-            'content' => $content,
-            'event' => $this->eventType,
-            'url' => route("{$currentUserRole}.tickets.show", $this->ticket->id),
-        ];
+        return match ($this->eventType) {
+            'created' => "New Ticket #{$this->ticket->id} Created",
+            'assigned' => "Ticket #{$this->ticket->id} Assigned",
+            'status_updated' => "Ticket #{$this->ticket->id} Status Updated",
+            'response' => "Update on Ticket #{$this->ticket->id}",
+            'document_uploaded' => "New Document Uploaded for Ticket #{$this->ticket->id}",
+            'resolved' => "Ticket #{$this->ticket->id} Resolved",
+            'approved' => "Ticket #{$this->ticket->id} is Approved 🎉",
+            'updated' => "Ticket #{$this->ticket->id} Updated",
+            default => "Notification for Ticket #{$this->ticket->id}",
+        };
     }
-
 }

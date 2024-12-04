@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('lawyer_email', 100)->nullable();
             $table->string('admin_note', 200)->nullable();
             $table->string('citation_no', 100)->nullable();
-            $table->string('status', 20)->nullable()->default('no');
+            $table->integer('status')->default(1);
             $table->string('updated_by', 50)->default('admin');
             $table->dateTime('court_date')->nullable();
             $table->string('court_address', 500)->nullable();

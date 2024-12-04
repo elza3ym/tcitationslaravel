@@ -22,16 +22,24 @@ class TicketNoteController extends Controller
         $request->validate([
             'note' => 'required'
         ]);
+        $request->merge([
+            'is_public' => $request->has('is_public') && $request->get('is_public') === true,
+        ]);
 
-        $admins = User::role('admin')->get(); // Collection of admins
-        $driver = $ticket->driver?->user;    // Single user instance or null
-        $usersToNotify = $driver
-            ? $admins->merge(collect([$driver]))
-            : $admins; // Combine admins with the driver if it exists
-        Notification::send($usersToNotify, new TicketNotification($ticket, 'response'));
+        if ($request->is_public) {
+            $admins = User::role('admin')->get(); // Collection of admins
+            $driver = $ticket->driver?->user;    // Single user instance or null
+            $usersToNotify = $driver
+                ? $admins->merge(collect([$driver]))
+                : $admins; // Combine admins with the driver if it exists
+            Notification::send($usersToNotify, new TicketNotification($ticket, 'response'));
+        }
+
+
 
         return $ticket->notes()->create([
             'note' => request('note'),
+            'is_public' => request('is_public'),
             'user_id' => \request()->user()->id
         ]);
     }

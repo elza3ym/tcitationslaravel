@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-span-12 sm:col-span-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Company</label>
+                                            <label class="form-label">Address</label>
                                             <input type="text" class="form-control-plaintext" value="{{ $ticket->address }}" readonly="readonly"/>
                                         </div>
                                     </div>
@@ -521,8 +521,9 @@
                                 <div class="col-span-12 md:col-span-6">
                                     <div class="card">
                                         <div class="card-body">
-                                        <h6 class="mb-4">{{ $note->note }}</h6>
-                                        <span class="text-muted text-sm float-end"> {{ $note->user->name }}</span>
+                                            <h6 class="mb-4">{{ $note->note }}</h6>
+                                            <span class="absolute left-0 bottom-0-0 bg-info-950 px-2 py-1 text-white rounded"> <span class="ti ti-clock"></span> {{ \Carbon\Carbon::parse($note->created_at)->diffForHumans() }}</span>
+                                            <span class="absolute right-0 bottom-0-0 bg-success px-2 py-1 text-white rounded"> <span class="ti ti-user"></span> {{ $note->user->name }}</span>
                                         </div>
                                     </div>
                                 </div>

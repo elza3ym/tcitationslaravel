@@ -41,6 +41,7 @@ class Ticket extends Model
 
     //
     public const INDICATOR_SENT_TO_ATTORNEY = 'Sent to Attorney';
+    public const INDICATOR_PENDING = 'Pending';
     public const INDICATOR_RECEIVED = 'Received';
     public const INDICATOR_CONTINUED = 'Continued';
     public const INDICATOR_DISPOSED = 'Disposed';
@@ -53,7 +54,8 @@ class Ticket extends Model
         self::INDICATOR_CONTINUED,
         self::INDICATOR_DISPOSED,
         self::INDICATOR_CANCELLED,
-        self::INDICATOR_ASSIGNED_TO_ATTORNEY
+        self::INDICATOR_ASSIGNED_TO_ATTORNEY,
+        self::INDICATOR_PENDING
     ];
     public const ATTORENY_RESPONSE_ACCEPTED = 'Accepted';
     public const ATTORENY_RESPONSE_REJECTED = 'Rejected';
@@ -93,7 +95,12 @@ class Ticket extends Model
     }
     public function notes()
     {
-        return $this->hasMany(TicketNote::class);
+        if (!auth()->user()->hasRole('admin')) {
+            // Show all notes for admin roles
+            return $this->hasMany(TicketNote::class);
+        }
+        // Show only public notes for the other role
+        return $this->hasMany(TicketNote::class)->where('is_public', true);
     }
 
     public function attorney() {
@@ -128,5 +135,15 @@ class Ticket extends Model
                 });
             });
         }
+    }
+
+    public function scopeApproved(Builder $query)
+    {
+        return $query->where('indicator', '!=', Ticket::INDICATOR_PENDING)->orWhereNull('indicator');;
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query->whereNotIn('status', [Ticket::TICKET_STATUS_ARCHIVED, Ticket::TICKET_STATUS_CLOSED])->orWhereNull('status');;
     }
 }

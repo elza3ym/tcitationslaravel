@@ -204,7 +204,7 @@
                                         <div class="col-span-12 sm:col-span-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="timezone">Timezone</label>
-                                                <select name="timezone" id="timezone" class="form-control">
+                                                <select name="timezone" id="timezone" class="form-control" required>
                                                     <option value="">Select a Timezone</option>
                                                     <option value="UTC-12:00" {{ old('timezone') == 'UTC-12:00' ? 'selected' : '' }}>(UTC-12:00) International Date Line West</option>
                                                     <option value="UTC-11:00" {{ old('timezone') == 'UTC-11:00' ? 'selected' : '' }}>(UTC-11:00) Coordinated Universal Time-11</option>

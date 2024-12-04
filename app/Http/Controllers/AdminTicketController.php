@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TicketsExport;
 use App\Filters\TicketFilters;
 use App\Models\Ticket;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
-class AdminTicketController extends Controller
+class AdminTicketController extends TicketController
 {
     use AuthorizesRequests;  // Ensure this is included
 
@@ -17,8 +19,33 @@ class AdminTicketController extends Controller
     public function index(TicketFilters $filters)
     {
         //
-        $tickets = Ticket::with('company')->filter($filters)->latest()->paginate(15);
+        $tickets = Ticket::with('company')
+            ->active()
+            ->filter($filters)
+            ->latest()
+            ->paginate(15);
         return view('admin.tickets.index', compact('tickets'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function archive()
+    {
+        //
+        $tickets = Ticket::with('company')
+            ->where('status', Ticket::TICKET_STATUS_ARCHIVED)
+            ->latest()
+            ->paginate(15);
+        return view('admin.tickets.archive', compact('tickets'));
+    }
+
+    public function restore(Ticket $ticket)
+    {
+        $this->authorize('update', $ticket);
+        $ticket->status = Ticket::TICKET_STATUS_OPEN;
+        $ticket->save();
+        return redirect()->back()->with('success', 'Ticket have been restored successfully.');
     }
 
     /**
@@ -112,6 +139,33 @@ class AdminTicketController extends Controller
         return view('admin.tickets.edit', compact('ticket'));
     }
 
+    public function bulkUpdate(Request $request)
+    {
+        $request->validate([
+            'action' => ['required', 'string', 'in:delete,archive'], // Adjust allowed actions as needed
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:tickets,id'], // Ensure IDs are valid ticket IDs
+        ]);
+
+        $action = $request->input('action');
+        $ticketIds = $request->input('ids', []);
+
+        // Authorize each ticket
+        foreach ($ticketIds as $ticketId) {
+            $ticket = Ticket::findOrFail($ticketId);
+            $this->authorize('update', $ticket);
+        }
+
+        // Perform the action
+        switch ($action) {
+            case 'archive':
+                Ticket::whereIn('id', $ticketIds)->update(['status' => Ticket::TICKET_STATUS_ARCHIVED]);
+                return redirect()->back()->with('success', 'Selected tickets have been archived.');
+
+            default:
+                return redirect()->back()->with('error', 'Invalid action selected.');
+        }
+    }
     /**
      * Update the specified resource in storage.
      */

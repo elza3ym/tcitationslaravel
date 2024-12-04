@@ -14,7 +14,7 @@ class TicketFilters extends Filters
         }
     }
     protected function status($status) {
-        if ($status) {
+        if (!is_null($status)) {
             return $this->builder->where('status', '=', $status);
         }
     }

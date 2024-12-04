@@ -7,7 +7,7 @@ use App\Models\Ticket;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
-class ManagerTicketController extends Controller
+class ManagerTicketController extends TicketController
 {
     use AuthorizesRequests;  // Ensure this is included
 

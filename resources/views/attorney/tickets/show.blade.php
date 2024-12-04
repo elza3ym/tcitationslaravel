@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-span-12 sm:col-span-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Company</label>
+                                            <label class="form-label">Address</label>
                                             <input type="text" class="form-control-plaintext" value="{{ $ticket->address }}" readonly="readonly"/>
                                         </div>
                                     </div>

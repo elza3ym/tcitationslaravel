@@ -64,7 +64,7 @@
 <script>
     const Toast = Swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: 'bottom-end',
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
@@ -116,7 +116,52 @@
 <script>
     main_layout_change('vertical');
 </script>
+<script>
+    document.addEventListener('click', function (e) {
+       const markAllReadBtn = e.target.closest('#markAllRead');
+       if (markAllReadBtn) {
+           fetch('{{ route('notifications.markAllRead') }}', {
+               method: 'POST',
+               headers: {
+                   'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                   'Content-Type': 'application/json',
+               },
+           })
+               .then(response => response.json())
+               .then(data => {
+                   let notificationContainer = document.querySelector('#notificationContainer');
+                   notificationContainer.innerHTML = '<div class="flex justify-center flex-col align-middle items-center">'+
+                       '<span class="text-[50px] text-secondary icon-bold fa fa-bell-slash grow mb-6"></span>'+
+                   '<span class="text-muted">'+
+                                       'You\'re all caught up! No new notifications at the moment.'+
+                                    '</span>'+
+               '</div>';
+                   markAllReadBtn.classList.add('hidden');
+                   document.querySelector('#notificationCount').innerHTML = '0';
+               })
+               .catch(error => console.error('Error:', error));
 
+       }
+       const notificationItem = e.target.closest('.notificationItem');
+        if (notificationItem) {
+            let notificationId = notificationItem.dataset.notificationId;
+            let notificationUrl = notificationItem.dataset.url;
+            console.log(notificationId);
+            fetch(`/notifications/${notificationId}/mark-as-read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    location.href = notificationUrl;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
 
 @include('layout.partials .themeCustomizer')
 </body>

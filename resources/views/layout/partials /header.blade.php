@@ -18,42 +18,42 @@
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">
             <ul class="inline-flex *:min-h-header-height *:inline-flex *:items-center">
-                <li class="dropdown pc-h-item">
-                    <a
-                        class="pc-head-link dropdown-toggle me-0"
-                        data-pc-toggle="dropdown"
-                        href="#"
-                        role="button"
-                        aria-haspopup="false"
-                        aria-expanded="false"
-                    >
-                        <svg class="pc-icon">
-                            <use xlink:href="#custom-layer"></use>
-                        </svg>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown">
-                        <div class="text-[16px] m-2">
-                            Select Companies
-                        </div>
-                        <div class="p-2 text-[14px]">
-                            <div class="form-check mb-2 pb-2">
-                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">Company 1</label>
-                            </div>
-                            <div class="form-check mb-2 pb-2">
-                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">Company 2</label>
-                            </div>
-                            <div class="form-check mb-2 pb-2">
-                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">Company 3</label>
-                            </div>
-                            <div class="float-end border-t-2 w-full pt-3">
-                                <button type="submit" class="btn btn-primary mb-1 float-end btn-sm">Apply</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+{{--                <li class="dropdown pc-h-item">--}}
+{{--                    <a--}}
+{{--                        class="pc-head-link dropdown-toggle me-0"--}}
+{{--                        data-pc-toggle="dropdown"--}}
+{{--                        href="#"--}}
+{{--                        role="button"--}}
+{{--                        aria-haspopup="false"--}}
+{{--                        aria-expanded="false"--}}
+{{--                    >--}}
+{{--                        <svg class="pc-icon">--}}
+{{--                            <use xlink:href="#custom-layer"></use>--}}
+{{--                        </svg>--}}
+{{--                    </a>--}}
+{{--                    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown">--}}
+{{--                        <div class="text-[16px] m-2">--}}
+{{--                            Select Companies--}}
+{{--                        </div>--}}
+{{--                        <div class="p-2 text-[14px]">--}}
+{{--                            <div class="form-check mb-2 pb-2">--}}
+{{--                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">--}}
+{{--                                <label class="form-check-label" for="flexCheckChecked">Company 1</label>--}}
+{{--                            </div>--}}
+{{--                            <div class="form-check mb-2 pb-2">--}}
+{{--                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">--}}
+{{--                                <label class="form-check-label" for="flexCheckChecked">Company 2</label>--}}
+{{--                            </div>--}}
+{{--                            <div class="form-check mb-2 pb-2">--}}
+{{--                                <input class="form-check-input mr-2" type="checkbox" value="" id="flexCheckChecked">--}}
+{{--                                <label class="form-check-label" for="flexCheckChecked">Company 3</label>--}}
+{{--                            </div>--}}
+{{--                            <div class="float-end border-t-2 w-full pt-3">--}}
+{{--                                <button type="submit" class="btn btn-primary mb-1 float-end btn-sm">Apply</button>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </li>--}}
                 <li class="dropdown pc-h-item">
                     <a
                         class="pc-head-link dropdown-toggle me-0"
@@ -100,22 +100,19 @@
                         <svg class="pc-icon">
                             <use xlink:href="#custom-notification"></use>
                         </svg>
-                        @if(count(auth()->user()->unreadNotifications))
-                        <span class="badge bg-success-500 text-white rounded-full z-10 absolute right-0 top-0">{{ count(auth()->user()->unreadNotifications) }}</span>
-                        @endif
+                        <span class="badge bg-success-500 text-white rounded-full z-10 absolute right-0 top-0" id="notificationCount">{{ count(auth()->user()->unreadNotifications) }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown p-2">
                         <div class="dropdown-header flex items-center justify-between py-4 px-5">
                             <h5 class="m-0">Notifications</h5>
                             @if(count(auth()->user()->unreadNotifications))
-                            <a href="#!" class="btn btn-link btn-sm">Mark all read</a>
+                            <a id="markAllRead" href="#!" class="btn btn-link btn-sm">Mark all read</a>
                             @endif
                         </div>
-                        <div class="dropdown-body header-notification-scroll relative py-4 px-5" style="max-height: calc(100vh - 215px)">
+                        <div id="notificationContainer" class="dropdown-body header-notification-scroll relative py-4 px-5" style="max-height: calc(100vh - 215px)">
                             @forelse(auth()->user()->unreadNotifications as $notification)
                             <div class="card mb-2">
-                                <div class="card-body">
-                                    <a href="{{ $notification->data['url'] }}">
+                                <div class="card-body notificationItem" data-url="{{ $notification->data['url'] }}" data-notification-id="{{ $notification->id }}">
                                     <div class="flex gap-4">
                                         <div class="shrink-0">
                                             <svg class="pc-icon text-primary w-[22px] h-[22px]">
@@ -130,7 +127,6 @@
                                             </p>
                                         </div>
                                     </div>
-                                    </a>
                                 </div>
                             </div>
                             @empty
@@ -140,7 +136,6 @@
                                         You're all caught up! No new notifications at the moment.
                                     </span>
                                 </div>
-
                             @endforelse
                         </div>
                     </div>

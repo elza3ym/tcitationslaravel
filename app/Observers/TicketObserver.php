@@ -17,7 +17,13 @@ class TicketObserver
     {
         //
         $user = auth()->user();
-        $usersToNotify = User::role('manager')->get(); // Example: notify Managers
+        $admins = User::role('admin')->get(); // Collection of admins
+        $driver = $ticket->driver?->user;    // Single user instance or null
+
+        $usersToNotify = $driver
+            ? $admins->merge(collect([$driver]))
+            : $admins; // Combine admins with the driver if it exists
+
         Notification::send($usersToNotify, new TicketNotification($ticket, 'created'));
         Log::create([
             'action' => 'Created Ticket',
@@ -35,32 +41,38 @@ class TicketObserver
         $updatedFields = $ticket->getDirty();
         $admins = User::role('admin')->get(); // Collection of admins
         $driver = $ticket->driver?->user;    // Single user instance or null
-
         $usersToNotify = $driver
             ? $admins->merge(collect([$driver]))
             : $admins; // Combine admins with the driver if it exists
 
-
-        foreach ($updatedFields as $updatedFieldName => $updatedFieldValue) {
             $notified = false;
-            if ($updatedFieldName === 'attorney_id') {
+            if (key_exists('attorney_id', $updatedFields)) {
                 Notification::send($usersToNotify, new TicketNotification($ticket, 'assigned'));
                 $notified = true;
             }
-
-            if ($updatedFieldName === 'indicator') {
-                Notification::send($usersToNotify, new TicketNotification($ticket, 'status_updated'));
+            if (key_exists('indicator', $updatedFields)) {
+                if ($ticket->getOriginal('indicator') === Ticket::INDICATOR_PENDING && $driver) {
+                    Notification::send($driver, new TicketNotification($ticket, 'approved'));
+                } else {
+                    Notification::send($usersToNotify, new TicketNotification($ticket, 'status_updated'));
+                }
                 $notified = true;
             }
 
-            if ($updatedFieldName === 'attorney_response') {
+            if (key_exists('attorney_response', $updatedFields)) {
                 Notification::send($usersToNotify, new TicketNotification($ticket, 'status_updated'));
                 $notified = true;
             }
             if (!$notified) {
                 Notification::send($usersToNotify, new TicketNotification($ticket, 'updated'));
             }
-        }
+
+        $user = auth()->user();
+        Log::create([
+            'action' => 'Updated Ticket',
+            'description' => "User {$user->name} updated a ticket with ID {$ticket->id}",
+            'user_id' => $user->id,
+        ]);
     }
 
     /**

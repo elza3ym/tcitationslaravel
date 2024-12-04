@@ -18,7 +18,6 @@
                         <table class="table table-hover" id="pc-dt-simple">
                             <thead>
                             <tr>
-                                <th></th>
                                 <th>Name</th>
                                 <th>CT Name</th>
                                 <th>DOT</th>
@@ -28,9 +27,6 @@
                             <tbody>
                             @foreach($companies as $company)
                                 <tr>
-                                    <td>
-                                        <input type="checkbox" class="form-check-input">
-                                    </td>
                                     <td>
                                         <div class="flex items-center">
                                             <div class="grow ltr:ml-1 rtl:mr-1">
@@ -65,19 +61,6 @@
                 </div>
                 <div class="card-footer">
                     <div class="flex justify-between">
-                        <div class="w-full">
-                            <div class="grid grid-cols-12 gap-1 mb-4 text-center">
-                                <label for="inputEmail3" class="col-span-1 sm:col-span-1 col-form-label py-1">Action</label>
-                                <div class="col-span-2 sm:col-span-2">
-                                    <select class="form-control form-control-sm" id="inputEmail3">
-                                        <option>Choose...</option>
-                                        <option>Action 1</option>
-                                        <option>Action 2</option>
-                                        <option>Action 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                         <div>
                             {{ $companies->links() }}
                         </div>

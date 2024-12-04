@@ -46,7 +46,7 @@ class AdminController extends Controller
             'city' => '',
             'state' => '',
             'zip' => '',
-            'phone' => '',
+            'phone' => 'unique:users,phone',
             'timezone' => '',
             'notification_email' => '',
             'notification_sms' => '',

@@ -82,6 +82,18 @@
                         <span class="pc-mtext">Tickets</span>
                     </a>
                 </li>
+                @role('admin')
+                <li class="pc-item pc-hasmenu">
+                    <a href="{{ route(auth()->user()->roles->first()->name.'.tickets.archive') }}" class="pc-link">
+                        <span class="pc-micon">
+                          <svg class="pc-icon">
+                            <use xlink:href="#custom-archive"></use>
+                          </svg>
+                        </span>
+                        <span class="pc-mtext">Archived Tickets</span>
+                    </a>
+                </li>
+                @endrole
                 @role('admin|manager')
                 <li class="pc-item pc-caption">
                     <label>Users</label>
@@ -152,37 +164,27 @@
                     </a>
                 </li>
 
-                <li class="pc-item pc-caption">
-                    <label>Citations</label>
-                    <svg class="pc-icon">
-                        <use xlink:href="#custom-box-1"></use>
-                    </svg>
-                </li>
-                <li class="pc-item">
-                    <a href="../elements/bc_alert.html" class="pc-link" target="_blank">
-                        <span class="pc-micon">
-                          <svg class="pc-icon">
-                            <use xlink:href="#custom-notification-status"></use>
-                          </svg>
-                        </span>
-                        <span class="pc-mtext">Citations</span>
-                    </a>
-                </li>
+{{--                <li class="pc-item pc-caption">--}}
+{{--                    <label>Citations</label>--}}
+{{--                    <svg class="pc-icon">--}}
+{{--                        <use xlink:href="#custom-box-1"></use>--}}
+{{--                    </svg>--}}
+{{--                </li>--}}
+{{--                <li class="pc-item">--}}
+{{--                    <a href="../elements/bc_alert.html" class="pc-link" target="_blank">--}}
+{{--                        <span class="pc-micon">--}}
+{{--                          <svg class="pc-icon">--}}
+{{--                            <use xlink:href="#custom-notification-status"></use>--}}
+{{--                          </svg>--}}
+{{--                        </span>--}}
+{{--                        <span class="pc-mtext">Citations</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 <li class="pc-item pc-caption">
                     <label>Administration</label>
                     <svg class="pc-icon">
                         <use xlink:href="#custom-element-plus"></use>
                     </svg>
-                </li>
-                <li class="pc-item">
-                    <a href="../forms/form2_wizard.html" class="pc-link">
-            <span class="pc-micon">
-              <svg class="pc-icon">
-                <use xlink:href="#custom-setting-2"></use>
-              </svg>
-            </span>
-                        <span class="pc-mtext">Site Settings</span>
-                    </a>
                 </li>
                 <li class="pc-item">
                     <a href="{{ route('admin.logs.index') }}" class="pc-link">
