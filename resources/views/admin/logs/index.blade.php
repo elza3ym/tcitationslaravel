@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="shrink-0">
                                     <p class="mb-0 text-muted">
-                                        {{ \Carbon\Carbon::parse($log->createdAt)->format('M j, Y | g:i A') }}
+                                        {{ \Carbon\Carbon::parse($log->created_at)->format('M j, Y | g:i A') }}
                                     </p>
                                 </div>
                             </div>
