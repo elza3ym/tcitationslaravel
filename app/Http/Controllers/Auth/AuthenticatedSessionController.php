@@ -27,19 +27,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-        $user = Auth::user();
-        switch ($user->roleable_type) {
-            case 'App\Models\Admin':
-                return redirect()->intended(route('admin.dashboard', absolute: false));
-            case 'App\Models\Company':
-                return redirect()->intended(route('company.dashboard', absolute: false));
-            case 'App\Models\Manager':
-                return redirect()->intended(route('manager.dashboard', absolute: false));
-            case 'App\Models\Attorney':
-                return redirect()->intended(route('attorney.dashboard', absolute: false));
-            case 'App\Models\Driver':
-                return redirect()->intended(route('driver.dashboard', absolute: false));
-        }
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

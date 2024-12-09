@@ -96,4 +96,19 @@ class User extends Authenticatable implements MustVerifyEmail
         // Default: No access
         return $query->whereRaw('1 = 0'); // This ensures no records are returned
     }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class)->latest();
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function readMessages()
+    {
+        return $this->hasMany(MessageRead::class);
+    }
 }

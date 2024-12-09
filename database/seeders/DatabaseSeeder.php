@@ -79,45 +79,15 @@ class DatabaseSeeder extends Seeder
             'delete citation',
         ]);
 
-        // Define the company role and assign permissions
-        $companyRole = Role::create(['name' => 'company']);
-        $companyRole->givePermissionTo([
-            'create tickets',
-            'read tickets',
-            'update tickets',
-            'delete tickets',
-            'read company',
-            'create attorneys',
-            'read attorneys',
-            'update attorneys',
-            'delete attorneys',
-            'create drivers',
-            'read drivers',
-            'update drivers',
-            'delete drivers',
-        ]);
-
         // Define the manager role and assign permissions
         $managerRole = Role::create(['name' => 'manager']);
-        $managerRole->givePermissionTo([
-            'read tickets',
-            'read company',
-            'read attorneys',
-            'read drivers',
-        ]);
 
         // Define the attorney role and assign permissions
         $attorneyRole = Role::create(['name' => 'attorney']);
-        $attorneyRole->givePermissionTo([
-            'read tickets',
-            'read drivers',
-        ]);
 
         // Define the driver role and assign permissions
-        $attorneyRole = Role::create(['name' => 'driver']);
-        $attorneyRole->givePermissionTo([
-            'read tickets',
-        ]);
+        $driverRole = Role::create(['name' => 'driver']);
+
         // Create role Models.
         $admin = Admin::create([]);
         $company = Company::create([
@@ -127,11 +97,17 @@ class DatabaseSeeder extends Seeder
             'ct_lname' => 'Company Lname',
             'dot' => '15081997'
         ]);
-        $manager = Manager::create([]);
-        $manager->companies()->attach($company->id, [
+        $managerWithWriteAccess = Manager::create([]);
+        $managerWithWriteAccess->companies()->attach($company->id, [
             'is_write_access' => true
         ]);
+        $managerWithoutWriteAccess = Manager::create([]);
+        $managerWithoutWriteAccess->companies()->attach($company->id, [
+            'is_write_access' => false
+        ]);
+
         $attorney = Attorney::create([]);
+
         $driver = Driver::create([
             'company_id' => $company->id
         ]);
@@ -155,23 +131,23 @@ class DatabaseSeeder extends Seeder
         ]);
         $driverUser->assignRole('driver');
 
-        $companyUser = User::factory()->create([
-            'name' => 'Company Account',
-            'email' => 'company@example.com',
-            'password' => Hash::make('admin1234'),
-            'roleable_id' => $company->id,
-            'roleable_type' => Company::class,
-        ]);
-        $companyUser->assignRole('company');
-
         $managerUser = User::factory()->create([
             'name' => 'Manager Account',
             'email' => 'manager@example.com',
             'password' => Hash::make('admin1234'),
-            'roleable_id' => $manager->id,
+            'roleable_id' => $managerWithWriteAccess->id,
             'roleable_type' => Manager::class,
         ]);
         $managerUser->assignRole('manager');
+
+        $managerUserNoAccess = User::factory()->create([
+            'name' => 'Manager Account',
+            'email' => 'manager@example.com',
+            'password' => Hash::make('admin1234'),
+            'roleable_id' => $managerWithoutWriteAccess->id,
+            'roleable_type' => Manager::class,
+        ]);
+        $managerUserNoAccess->assignRole('manager');
 
         $attorneyUser = User::factory()->create([
             'name' => 'Attorney Account',

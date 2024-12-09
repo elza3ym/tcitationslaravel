@@ -57,7 +57,7 @@
                     </a>
                 </li>
                 <li class="pc-item pc-hasmenu">
-                    <a href="/administrators" class="pc-link">
+                    <a href="{{ route('messaging.index') }}" class="pc-link">
                         <span class="pc-micon">
                           <svg class="pc-icon">
                             <use xlink:href="#custom-message-2"></use>

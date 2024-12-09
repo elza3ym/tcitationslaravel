@@ -34,7 +34,9 @@
     <link rel="stylesheet" href="{{ asset('fonts/material.css') }}" />
     <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" id="main-style-link" />
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}"/>
 
+    @vite(['resources/js/app.js'])
     <!-- [Page specific CSS] start -->
     @yield('css')
     <!-- [Page specific CSS] end -->

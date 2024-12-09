@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Company;
+use App\Models\Log;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -10,7 +13,19 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $stats = [
+            'tickets' => Ticket::active()->count(),
+            'drivers' => User::role('driver')->count(),
+            'attorneys' => User::role('attorney')->count(),
+            'companies' => Company::count()
+        ];
+        $upComingCourtDates = Ticket::whereBetween('court_date', [now(), now()->addDays(5)])
+            ->orderBy('court_date', 'asc')
+            ->limit(5)
+            ->get();
+        $pendingTickets = Ticket::where('indicator', Ticket::INDICATOR_PENDING)->orWhereNull('indicator')->limit(5)->get();
+        $logs = Log::limit(5)->latest()->get();
+        return view('admin.dashboard', compact('stats', 'upComingCourtDates', 'pendingTickets', 'logs'));
     }
     /**
      * Display a listing of the resource.

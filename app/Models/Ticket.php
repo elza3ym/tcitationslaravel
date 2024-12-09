@@ -139,7 +139,7 @@ class Ticket extends Model
 
     public function scopeApproved(Builder $query)
     {
-        return $query->where('indicator', '!=', Ticket::INDICATOR_PENDING)->orWhereNull('indicator');;
+        return $query->where('indicator', '!=', Ticket::INDICATOR_PENDING)->orWhereNull('indicator');
     }
 
     public function scopeActive(Builder $query)
